@@ -31,6 +31,7 @@ function RegisterPage(){
             setLoading(false);
             navigate('/')
           } catch(err){
+            setLoading(false);
             console.log(err)
             setErrorMsg(err.message)
           }

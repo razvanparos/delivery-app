@@ -27,8 +27,8 @@
     font-size: 20px;
 }
 .input{
-    width: 69%;
-    background-color: rgba(128, 128, 128, 0.596);
+    min-width: 69%;
+    background-color: rgba(172, 169, 169, 0.815);
     border: 0px;
     padding: 4px 16px;
     border-radius: 8px;
@@ -76,4 +76,10 @@
 }
 .fa-check{
     filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(103deg) brightness(105%) contrast(105%);
+}
+.error{
+    color: red;
+    font-weight: 700;
+    max-width: 250px;
+    text-align: center;
 }
