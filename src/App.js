@@ -4,6 +4,8 @@ import CheckLoggedIn from './pages/checkLoggedIn/checkLoggedIn';
 import LoginPage from './pages/loginPage/loginPage';
 import RegisterPage from './pages/registerPage/registerPage';
 import Dashboard from './pages/dashboard/dashboard';
+import DashboardRestaurant from './pages/dashboardRestaurant/dashboardRestaurant';
+import DashboardDelivery from './pages/dashboardDelivery/dashboardDelivery';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard-restaurant" element={<DashboardRestaurant/>} />
+          <Route path="/dashboard-delivery" element={<DashboardDelivery/>} />
         </Routes>
       </Router>
     </div>

@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import {auth} from '../../firebase-config';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import Loader from '../../components/Loader/Loader';
+import {getDocs, collection, query, where, doc, setDoc} from 'firebase/firestore';
+import {db} from '../../firebase-config'
+
 
 function LoginPage() {
   const [inputEmail, setInputEmail] = useState('')
@@ -14,6 +17,8 @@ function LoginPage() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
 
+  const usersDb = collection(db,'UsersDetails')
+
   const handleSubmit = async (e)=>{
     e.preventDefault();
     if(inputEmail && inputPassword){
@@ -21,7 +26,23 @@ function LoginPage() {
         setLoading(true);
         await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
         setResult()
-        navigate('/dashboard')
+        const q = query(usersDb, where("id", "==", auth.currentUser.uid));
+                const querySnapshot = await getDocs(q);
+                const filteredData = querySnapshot.docs.map((doc)=>({
+                   ...doc.data(),
+                   id: doc.id,
+               }))
+               
+        let userType = filteredData[0].userType
+        if(userType==='client'){
+          navigate('/dashboard')
+        }
+        if(userType==='restaurant'){
+          navigate('/dashboard-restaurant')
+        }
+        if(userType==='delivery'){
+          navigate('/dashboard-delivery')
+        }
         localStorage.setItem('LoggedIn',true)
         localStorage.setItem('currentUserId',auth.currentUser.uid)
         if(rememberMe===true){

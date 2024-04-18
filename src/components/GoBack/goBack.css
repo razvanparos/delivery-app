@@ -1,0 +1,29 @@
+.go-back-div{
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    outline: 0px;
+}
+.go-back{
+    border: none;
+    width: 100%;
+    display: flex;
+    background-color: transparent;
+    padding: 12px;
+  
+}
+.go-back:active{
+    border: none;
+    outline: 0px;
+    outline-style:none;
+}
+.go-back:focus{
+    border: none;
+    outline: 0px;
+    outline-style:none;
+}
+.arrow{
+    scale: 2;
+    filter: brightness(0) saturate(100%) invert(52%) sepia(100%) saturate(300%) hue-rotate(98deg) brightness(97%) contrast(91%);
+    cursor: pointer;
+}

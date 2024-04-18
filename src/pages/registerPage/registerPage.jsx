@@ -6,6 +6,7 @@ import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {db} from '../../firebase-config';
 import { doc, setDoc } from "firebase/firestore"; 
 import Loader from '../../components/Loader/Loader';
+import GoBack from '../../components/GoBack/goBack';
 
 function RegisterPage(){
     const [inputPhone, setInputPhone] = useState('')
@@ -42,6 +43,7 @@ function RegisterPage(){
         <div className="login-page-div">
           {loading ? <Loader/> : 
             <form action="" className='login-form'>
+              <GoBack/>
                 <h2>Register</h2>
                 <input className='input' type="number" maxLength={10} placeholder='Phone' value={inputPhone} onChange={(e)=>{setInputPhone(e.target.value)}}/>
                 <input className='input' type="email" placeholder='Email' value={inputEmail} onChange={(e)=>{setInputEmail(e.target.value)}}/>
