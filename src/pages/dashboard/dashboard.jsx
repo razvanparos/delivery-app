@@ -14,10 +14,14 @@ function Dashboard(){
     const usersDb = collection(db,'UsersDetails')
    
     useEffect(() => {
-      if (isLoggedIn === "false" || !isLoggedIn) {
-            navigate('/login');
-        }  
-    }, [isLoggedIn]);
+        let userType = localStorage.getItem('userType')
+        if (isLoggedIn === "false" || !isLoggedIn ) {
+              navigate('/login');
+          }
+        if(userType != 'client'){
+          navigate(`/dashboard-${userType}`)
+        }
+      }, []);
 
     useEffect(() => {
         let currentUID = localStorage.getItem('currentUserId')
@@ -54,6 +58,7 @@ function Dashboard(){
 
     return(
         <div className="dashboard-div">
+            client
             <button onClick={signOut}>sign out</button>
         </div>
     );

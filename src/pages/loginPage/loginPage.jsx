@@ -1,5 +1,6 @@
 import './loginPage.css';
-import React, { useState } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
 import { FaCheck } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import {auth} from '../../firebase-config';
@@ -15,9 +16,17 @@ function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
   const [result, setResult] = useState()
   const [loading, setLoading] = useState(false)
+  const [isLoggedIn, setIsLoggedIn]=useState(localStorage.getItem('LoggedIn'));
+
   const navigate = useNavigate();
 
   const usersDb = collection(db,'UsersDetails')
+
+  useEffect(() => {
+    if (isLoggedIn === "true") {
+          navigate('/dashboard-client');
+      }
+  }, []);
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
@@ -34,17 +43,10 @@ function LoginPage() {
                }))
                
         let userType = filteredData[0].userType
-        if(userType==='client'){
-          navigate('/dashboard')
-        }
-        if(userType==='restaurant'){
-          navigate('/dashboard-restaurant')
-        }
-        if(userType==='delivery'){
-          navigate('/dashboard-delivery')
-        }
+        navigate(`/dashboard-${userType}`)
         localStorage.setItem('LoggedIn',true)
         localStorage.setItem('currentUserId',auth.currentUser.uid)
+        localStorage.setItem('userType',userType)
         if(rememberMe===true){
           localStorage.setItem('RememberMe',true)
         }
