@@ -10,7 +10,7 @@ function CheckLoggedIn() {
         }
         let loggedIn = localStorage.getItem('LoggedIn') === 'true'; 
         if (loggedIn) {
-            navigate('/dashboard');
+            navigate('/dashboard-client');
         } else {
             navigate('/login');
         }

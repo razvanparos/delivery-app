@@ -25,8 +25,8 @@ function DashboardDelivery() {
     navigate('/');
 }
 
-  return (
-    <div className='dashboard-restaurant-div'>
+  return ( 
+    <div className='dashboard-restaurant-div dashboard'>
         dashboard delivery
         <button onClick={signOut}>Sign out</button>
     </div>

@@ -3,6 +3,8 @@ import './dashboard.css'
 import { useNavigate } from 'react-router-dom';
 import {getDocs, collection, query, where, doc, setDoc} from 'firebase/firestore';
 import {db} from '../../firebase-config'
+import Loader from '../../components/Loader/Loader';
+
 
 
 
@@ -10,8 +12,11 @@ function Dashboard(){
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn]=useState(localStorage.getItem('LoggedIn'));
     const [userData, setUserData]=useState();
+    const [restaurantData, setRestaurantData]=useState([]);
+    const [loading, setLoading] = useState(false)
 
     const usersDb = collection(db,'UsersDetails')
+    const restaurantsDb = collection(db,'Restaurants')
    
     useEffect(() => {
         let userType = localStorage.getItem('userType')
@@ -39,8 +44,23 @@ function Dashboard(){
                }
         }
         getUserData();
-        },[]
-    )
+        const getRestaurantData = async () =>{
+            try{
+                setLoading(true);
+                const restaurantDataDocs = await getDocs(restaurantsDb);
+                const filteredData = restaurantDataDocs.docs.map((doc)=>({
+                   ...doc.data(),
+                   id: doc.id,
+               }))
+               setRestaurantData(filteredData)
+               setLoading(false);
+               } catch(err){
+                setLoading(false);
+                   console.log(err)
+               }
+        }
+        getRestaurantData();
+        },[])
 
     // useEffect(()=>{
     //     console.log(userData)
@@ -57,8 +77,13 @@ function Dashboard(){
         
 
     return(
-        <div className="dashboard-div">
+        <div className="dashboard-div dashboard">
             client
+            <div className='restaurants-list'>
+                {loading ? <Loader/> : restaurantData.map((restaurant) => (
+                   <p key={restaurant.id}>{restaurant.name}</p>
+                ))}
+            </div>
             <button onClick={signOut}>sign out</button>
         </div>
     );
