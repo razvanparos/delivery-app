@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import {getDocs, collection, query, where, doc, setDoc} from 'firebase/firestore';
 import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
-
-
-
+import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
+import NavbarClient from '../../components/NavbarClient/NavbarClient';
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -14,6 +13,9 @@ function Dashboard(){
     const [userData, setUserData]=useState();
     const [restaurantData, setRestaurantData]=useState([]);
     const [loading, setLoading] = useState(false)
+    const [searchInput, setSearchInput]=useState('');
+    const [originalRestaurantData, setOriginalRestaurantData]=useState([]);
+
 
     const usersDb = collection(db,'UsersDetails')
     const restaurantsDb = collection(db,'Restaurants')
@@ -53,6 +55,7 @@ function Dashboard(){
                    id: doc.id,
                }))
                setRestaurantData(filteredData)
+               setOriginalRestaurantData(filteredData)
                setLoading(false);
                } catch(err){
                 setLoading(false);
@@ -62,9 +65,15 @@ function Dashboard(){
         getRestaurantData();
         },[])
 
-    // useEffect(()=>{
-    //     console.log(userData)
-    // },[userData])
+        useEffect(() => {
+            let originalData=originalRestaurantData;
+            const filteredData = originalData.filter(item => item.name.toLowerCase().includes(searchInput.toLowerCase()));
+            setRestaurantData(filteredData);       
+        }, [searchInput]);
+
+    useEffect(()=>{
+        console.log(restaurantData)
+    },[searchInput])
     
 
     const signOut = () =>{
@@ -78,13 +87,19 @@ function Dashboard(){
 
     return(
         <div className="dashboard-div dashboard">
-            client
+            <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}}/>
             <div className='restaurants-list'>
                 {loading ? <Loader/> : restaurantData.map((restaurant) => (
-                   <p key={restaurant.id}>{restaurant.name}</p>
+                    <RestaurantCard 
+                        key={restaurant.id}
+                        name={restaurant.name}
+                        image={restaurant.image}
+                    />
                 ))}
             </div>
-            <button onClick={signOut}>sign out</button>
+            {restaurantData.length> 0 ? '': 'No results'}
+            <NavbarClient/>
+            {/* <button onClick={signOut}>sign out</button> */}
         </div>
     );
 }
