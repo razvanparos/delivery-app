@@ -6,6 +6,7 @@ import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
 import NavbarClient from '../../components/NavbarClient/NavbarClient';
+import { FaSearch } from "react-icons/fa";
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -87,7 +88,8 @@ function Dashboard(){
 
     return(
         <div className="dashboard-div dashboard">
-            <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}}/>
+            <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}} />
+            <FaSearch className='search-bar-magnification'/>
             <div className='restaurants-list'>
                 {loading ? <Loader/> : restaurantData.map((restaurant) => (
                     <RestaurantCard 
@@ -102,6 +104,7 @@ function Dashboard(){
             {/* <button onClick={signOut}>sign out</button> */}
         </div>
     );
+    
 }
 
 export default Dashboard;  
