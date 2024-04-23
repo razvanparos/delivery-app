@@ -6,9 +6,9 @@ import { FaUser } from "react-icons/fa";
 
 
 
-function NavbarClient(){
+function NavbarClient(props){
     return(
-        <div className='navbar-client-div'>
+        <div className={`navbar-client-div ${props.hideNav ? 'hideNav' : 'showNav' }` }>
             <FaHouse className='icon'/>
             <FaSearch className='icon'/>
             <FaShoppingCart className='icon'/>

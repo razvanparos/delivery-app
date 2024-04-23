@@ -14,7 +14,9 @@ function Dashboard(){
     const [userData, setUserData]=useState();
     const [restaurantData, setRestaurantData]=useState([]);
     const [loading, setLoading] = useState(false)
+    const [hideNav, setHideNav] = useState(false)
     const [searchInput, setSearchInput]=useState('');
+    const [initialScroll, setInitialScroll]=useState(0);
     const [originalRestaurantData, setOriginalRestaurantData]=useState([]);
 
 
@@ -75,6 +77,20 @@ function Dashboard(){
     useEffect(()=>{
         console.log(restaurantData)
     },[searchInput])
+
+   
+
+    window.addEventListener('scroll',function(){
+    if(initialScroll >  window.scrollY){
+        setInitialScroll( window.scrollY)
+        setHideNav(false)
+    }
+    if(initialScroll <  window.scrollY){
+        setInitialScroll( window.scrollY)
+        setHideNav(true)
+    }
+
+})
     
 
     const signOut = () =>{
@@ -100,7 +116,7 @@ function Dashboard(){
                 ))}
             </div>
             {restaurantData.length> 0 ? '': 'No results'}
-            <NavbarClient/>
+            <NavbarClient hideNav={hideNav}/>
             {/* <button onClick={signOut}>sign out</button> */}
         </div>
     );

@@ -5,12 +5,14 @@
     align-items: center;
     flex-direction: column;
     row-gap: 12px;
-    margin-bottom: 70px;
+    margin-bottom: 20px;
+}
+.dashboard-div{
+    position:relative;
 }
 .search-bar{
     width: 100%;
-    position: relative;
-    background-color: rgba(172, 169, 169, 0.815);
+    background-color: rgba(172, 169, 169, 0.452);
     border: 0px;
     padding: 8px 40px;
     border-radius: 8px;

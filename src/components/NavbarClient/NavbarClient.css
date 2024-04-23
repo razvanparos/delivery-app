@@ -1,18 +1,24 @@
 .navbar-client-div{
-    display:flex;
+    display: flex;
+    transition: 0.3s;
     align-items: center;
     padding: 0px 40px;
     justify-content: space-between;
     width: 100vw;
     max-width: 500px;
-    height: 70px;
+    height: 60px;
     position: fixed;
-    bottom: 0px;
     background-color: var(--green);
-    padding-bottom: 12px;
 }
 .icon{
     filter: invert(1);
     scale: 1.5;
     cursor: pointer;
 }
+.hideNav{
+    bottom: -70px;
+}
+.showNav{
+  
+    bottom: 0px;
+}   
