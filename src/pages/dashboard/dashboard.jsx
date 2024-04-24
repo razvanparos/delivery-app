@@ -81,6 +81,7 @@ function Dashboard(){
    
 
     window.addEventListener('scroll',function(){
+    let maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     if(initialScroll >  window.scrollY){
         setInitialScroll( window.scrollY)
         setHideNav(false)
@@ -89,9 +90,12 @@ function Dashboard(){
         setInitialScroll( window.scrollY)
         setHideNav(true)
     }
+    if(window.scrollY > maxScroll-50){
+        setHideNav(true)
+    }
+    })
 
-})
-    
+   
 
     const signOut = () =>{
         localStorage.setItem('LoggedIn',false)
