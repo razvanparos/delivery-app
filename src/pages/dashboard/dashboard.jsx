@@ -78,8 +78,6 @@ function Dashboard(){
         console.log(restaurantData)
     },[searchInput])
 
-   
-
     window.addEventListener('scroll',function(){
     let maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     if(initialScroll >  window.scrollY){
@@ -119,7 +117,7 @@ function Dashboard(){
                     />
                 ))}
             </div>
-            {restaurantData.length> 0 ? '': 'No results'}
+            {restaurantData.length> 0 || loading ? '': 'No results'}
             <NavbarClient hideNav={hideNav}/>
             {/* <button onClick={signOut}>sign out</button> */}
         </div>

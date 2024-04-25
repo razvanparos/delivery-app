@@ -5,12 +5,14 @@ import { useEffect, useState } from 'react';
 import {getDocs, collection, query, where, doc, setDoc} from 'firebase/firestore';
 import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
+import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
 
 
 
 function DashboardRestaurant() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn]=useState(localStorage.getItem('LoggedIn'));
+  const [addRestaurant, setAddRestaurant]=useState(false);
   const [restaurantData, setRestaurantData]=useState([]);
   const [loading, setLoading] = useState(false)
 
@@ -63,14 +65,29 @@ function DashboardRestaurant() {
 
   return (
     <div className='dashboard-restaurant-div dashboard'>
-        <h2>My restaurants</h2>
-        <div className='restaurants-list'>
-                {loading ? <Loader/> : restaurantData.map((restaurant) => (
-                   <p key={restaurant.id}>{restaurant.name}</p>
-                ))}
-            </div>
-        <button>Add new restaurant</button>
-        <button onClick={signOut}>Sign Out</button>
+        {addRestaurant ? 
+          <form className='add-restaurant-form'>
+            <label htmlFor="">Name</label>
+            <input type="text" />
+            <label htmlFor="">Image</label>
+            <input type="file" />
+
+            <button onClick={()=>{setAddRestaurant(false)}}>Cancel</button>
+          </form> :
+            <div className='restaurants-list'>
+            <h2>My restaurants</h2>
+            <button onClick={()=>{setAddRestaurant(true)}}>Add new restaurant</button>
+            <button onClick={signOut}>Sign Out</button>
+                    {loading ? <Loader/> : restaurantData.map((restaurant) => (
+                      <RestaurantCard 
+                          key={restaurant.id}
+                          name={restaurant.name}
+                          image={restaurant.image}
+                  />
+              ))}
+              </div>
+        }
+        
     </div>
     
   );

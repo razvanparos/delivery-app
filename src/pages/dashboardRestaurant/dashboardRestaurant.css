@@ -4,3 +4,16 @@
     width: 100%;
     row-gap: 24px;
 }
+.restaurants-list > button{
+    background-color: var(--green);
+    border: 0px;
+    padding: 8px;
+    border-radius: 10px;
+    color: white;
+    font-size: 18px;
+}
+.add-restaurant-form{
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+}
