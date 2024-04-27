@@ -14,6 +14,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 function DashboardRestaurant() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn]=useState(localStorage.getItem('LoggedIn'));
+  const [currentUID, setCurrentUID]=useState(localStorage.getItem('currentUserId'));
   const [addRestaurant, setAddRestaurant]=useState(false);
   const [restaurantData, setRestaurantData]=useState([]);
   const [loading, setLoading] = useState(false)
@@ -33,7 +34,6 @@ function DashboardRestaurant() {
   }, []);
 
   useEffect(() => {
-    let currentUID = localStorage.getItem('currentUserId')
     const getUserData = async () =>{
         try{
           setLoading(true);
@@ -66,28 +66,23 @@ function DashboardRestaurant() {
 
   const addNewRestaurant = async (e)=>{
       e.preventDefault()
-      let currentUID = localStorage.getItem('currentUserId')
+      setLoading(true);
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0]; 
-      console.log(file)
       const imageRef = ref(storage, newRestaurantName);
       try {
         await uploadBytes(imageRef, file);
-        console.log("Image uploaded successfully!");
-
-   
         const imageUrl = await getDownloadURL(imageRef);
-
-
         await setDoc(doc(db, "Restaurants", currentUID), {
             name: newRestaurantName,
             image: imageUrl, 
             owner: currentUID
         });
-
-        console.log("Restaurant added successfully!");
+        setLoading(false);
         setAddRestaurant(false); 
+        window.location.reload();
     } catch (error) {
+        setLoading(false);
         console.error("Error uploading image:", error);
     }
       
@@ -95,29 +90,33 @@ function DashboardRestaurant() {
 
   return (
     <div className='dashboard-restaurant-div dashboard'>
-        {addRestaurant ? 
-          <form className='add-restaurant-form'>
-            <label htmlFor="">Name </label>
-            <input type="text" value={newRestaurantName}  onChange={(e)=>{setNewRestaurantName(e.target.value)}}/>
+        {addRestaurant ?
+          <div>
+            {loading ? <Loader/> :
+              <form className='add-restaurant-form'>  
+                <label htmlFor="">Name </label>
+                <input type="text" value={newRestaurantName}  onChange={(e)=>{setNewRestaurantName(e.target.value)}}/>
 
-            <label htmlFor="">Image </label>
-            <input type="file" id='fileInput' onChange={(e)=>{console.log(e.target.elements)}}/>
+                <label htmlFor="">Image </label>
+                <input type="file" id='fileInput' onChange={(e)=>{console.log(e.target.elements)}}/>
 
-            <button onClick={addNewRestaurant}>Submit</button>
-            <button onClick={()=>{setAddRestaurant(false)}}>Cancel</button>
-          </form> :
+                <button onClick={addNewRestaurant}>Submit</button>
+                <button onClick={()=>{setAddRestaurant(false)}}>Cancel</button>
+              </form>  
+            }
+           </div>:
             <div className='restaurants-list'>
-            <h2>My restaurants</h2>
-            <button onClick={()=>{setAddRestaurant(true)}}>Add new restaurant</button>
-            <button onClick={signOut}>Sign Out</button>
-                    {loading ? <Loader/> : restaurantData.map((restaurant) => (
-                      <RestaurantCard 
-                          key={restaurant.id}
-                          name={restaurant.name}
-                          image={restaurant.image}
+              <h2>My restaurants</h2>
+              <button onClick={()=>{setAddRestaurant(true)}}>Add new restaurant</button>
+              <button onClick={signOut}>Sign Out</button>
+              {loading ? <Loader/> : restaurantData.map((restaurant) => (
+                  <RestaurantCard 
+                      key={restaurant.id}
+                      name={restaurant.name}
+                      image={restaurant.image}
                   />
               ))}
-              </div>
+            </div>
         }
         
     </div>
