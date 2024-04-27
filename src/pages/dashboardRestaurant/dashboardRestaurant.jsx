@@ -17,10 +17,12 @@ function DashboardRestaurant() {
   const [currentUID, setCurrentUID]=useState(localStorage.getItem('currentUserId'));
   const [addRestaurant, setAddRestaurant]=useState(false);
   const [restaurantData, setRestaurantData]=useState([]);
+  const [userData, setUserData]=useState();
   const [loading, setLoading] = useState(false)
   const [newRestaurantName, setNewRestaurantName] = useState('')
 
   const restaurantsDb = collection(db,'Restaurants')
+  const usersDb = collection(db,'UsersDetails')
 
 
   useEffect(() => {
@@ -34,7 +36,7 @@ function DashboardRestaurant() {
   }, []);
 
   useEffect(() => {
-    const getUserData = async () =>{
+    const getMyRestaurants = async () =>{
         try{
           setLoading(true);
             const q = query(restaurantsDb, where("owner", "==", currentUID));
@@ -50,12 +52,26 @@ function DashboardRestaurant() {
                console.log(err)
            }
     }
+    const getUserData = async () =>{
+      try{
+          const q = query(usersDb, where("id", "==", currentUID));
+          const querySnapshot = await getDocs(q);
+          const filteredData = querySnapshot.docs.map((doc)=>({
+             ...doc.data(),
+             id: doc.id,
+         }))
+          setUserData(filteredData[0])
+         } catch(err){
+             console.log(err)
+         }
+  }
     getUserData();
+    getMyRestaurants();
     }, [])
 
-     useEffect(()=>{
-        console.log(restaurantData)
-    },[restaurantData])
+    //  useEffect(()=>{
+    //     console.log(userData)
+    // },[userData])
     
   const signOut = () =>{
     localStorage.setItem('LoggedIn',false)
@@ -106,7 +122,11 @@ function DashboardRestaurant() {
             }
            </div>:
             <div className='restaurants-list'>
-              <h2>My restaurants</h2>
+              <div>
+                <h2>My restaurants</h2>
+                <p>{userData?.email}</p>
+                <p>{userData?.phone}</p>
+              </div>
               <button onClick={()=>{setAddRestaurant(true)}}>Add new restaurant</button>
               <button onClick={signOut}>Sign Out</button>
               {loading ? <Loader/> : restaurantData.map((restaurant) => (

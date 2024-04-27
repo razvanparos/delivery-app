@@ -3,6 +3,7 @@
     flex-direction: column;
     width: 100%;
     row-gap: 24px;
+    color: white;
 }
 .restaurants-list > button{
     background-color: var(--green);

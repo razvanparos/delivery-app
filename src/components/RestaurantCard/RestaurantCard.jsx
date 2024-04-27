@@ -1,9 +1,17 @@
 import './RestaurantCard.css'
 import { MdOutlineDeliveryDining } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 
 function RestaurantCard(props){
+    const navigate = useNavigate();
+    const cardClick = ()=>{
+        const formattedName = props.name.toLowerCase().replace(/\s+/g, '-');
+        navigate(`/dashboard-restaurant/${formattedName}`)
+        
+    }
+
     return(
-        <div className='restaurant-card-div' onClick={()=>{console.log(props.name)}}>
+        <div className='restaurant-card-div' onClick={cardClick}>
             <img src={props.image} alt="imagine-mancare" className='restaurant-image'/>
             <div className='card-bottom'>
                <p className='card-name'>{props.name}</p> 
@@ -11,9 +19,7 @@ function RestaurantCard(props){
                     <MdOutlineDeliveryDining className='scooter'/>
                     <p className='delivery-price'>2,99 lei</p>
                </div>
-               
             </div>
-            
         </div>
         
     );

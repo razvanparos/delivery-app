@@ -6,6 +6,7 @@ import RegisterPage from './pages/registerPage/registerPage';
 import Dashboard from './pages/dashboard/dashboard';
 import DashboardRestaurant from './pages/dashboardRestaurant/dashboardRestaurant';
 import DashboardDelivery from './pages/dashboardDelivery/dashboardDelivery';
+import RestaurantIndividual from './pages/restaurantIndividual/restaurantIndividual';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard-client" element={<Dashboard />} />
           <Route path="/dashboard-restaurant" element={<DashboardRestaurant/>} />
+          <Route path="/dashboard-restaurant/:restaurantName" element={<RestaurantIndividual/>} />
           <Route path="/dashboard-delivery" element={<DashboardDelivery/>} />
         </Routes>
       </Router>
