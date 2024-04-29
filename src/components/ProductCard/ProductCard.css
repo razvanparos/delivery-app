@@ -1,0 +1,22 @@
+.product-card-div{
+    text-transform: capitalize;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    min-width: 100%;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.486);
+    padding-bottom: 24px;
+}
+.product-image{
+    width: 200px;
+    height: 100px;
+    border-radius: 20px;
+    object-fit: cover;
+
+}
+.product-card-left{
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+}

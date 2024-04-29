@@ -6,7 +6,8 @@ function RestaurantCard(props){
     const navigate = useNavigate();
     const cardClick = ()=>{
         const formattedName = props.name.toLowerCase().replace(/\s+/g, '-');
-        navigate(`/dashboard-restaurant/${formattedName}`)
+        console.log(props.id)
+        navigate(`/dashboard-restaurant/${formattedName}/${props.id}`)
         
     }
 

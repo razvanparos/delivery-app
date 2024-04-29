@@ -18,7 +18,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard-client" element={<Dashboard />} />
           <Route path="/dashboard-restaurant" element={<DashboardRestaurant/>} />
-          <Route path="/dashboard-restaurant/:restaurantName" element={<RestaurantIndividual/>} />
+          <Route path="/dashboard-restaurant/:restaurantName/:restaurantId" element={<RestaurantIndividual/>} />
           <Route path="/dashboard-delivery" element={<DashboardDelivery/>} />
         </Routes>
       </Router>

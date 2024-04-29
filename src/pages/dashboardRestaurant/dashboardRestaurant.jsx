@@ -132,6 +132,7 @@ function DashboardRestaurant() {
               {loading ? <Loader/> : restaurantData.map((restaurant) => (
                   <RestaurantCard 
                       key={restaurant.id}
+                      id={restaurant.id}
                       name={restaurant.name}
                       image={restaurant.image}
                   />

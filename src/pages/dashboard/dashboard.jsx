@@ -88,7 +88,7 @@ function Dashboard(){
         setInitialScroll( window.scrollY)
         setHideNav(true)
     }
-    if(window.scrollY > maxScroll-50){
+    if(window.scrollY > maxScroll-150){
         setHideNav(true)
     }
     })
@@ -112,6 +112,7 @@ function Dashboard(){
                 {loading ? <Loader/> : restaurantData.map((restaurant) => (
                     <RestaurantCard 
                         key={restaurant.id}
+                        id={restaurant.id}
                         name={restaurant.name}
                         image={restaurant.image}
                     />

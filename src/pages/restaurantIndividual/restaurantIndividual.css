@@ -2,3 +2,41 @@
     color: white;
     text-transform: capitalize;
 }
+.individual-image{
+    object-fit: cover;
+    width: 100vw;
+    max-height: 180px;
+    min-height: 180px;
+    opacity: 0.6;
+}
+.restaurant-individual-div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 12px;
+}
+.add-product-btn{
+    cursor: pointer;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    row-gap: 8px;
+    border: 0px;
+    outline: 0px;  
+    background-color: transparent;
+    color: white;
+    font-size: 20px;
+    margin-top: 12px;
+}
+.add-product-icon{
+    color: var(--green);
+    scale: 1.5;
+}
+.products-list{
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    row-gap: 16px;
+    flex-direction: column;
+}
