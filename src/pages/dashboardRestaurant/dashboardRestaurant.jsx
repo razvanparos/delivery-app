@@ -8,6 +8,7 @@ import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
 import {storage} from '../../firebase-config'
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import ChangesSaved from '../../components/ChangesSaved/ChangesSaved';
 
 
 
@@ -19,11 +20,28 @@ function DashboardRestaurant() {
   const [restaurantData, setRestaurantData]=useState([]);
   const [userData, setUserData]=useState();
   const [loading, setLoading] = useState(false)
+  const [changesSaved, setChangesSaved] = useState(false)
   const [newRestaurantName, setNewRestaurantName] = useState('')
 
   const restaurantsDb = collection(db,'Restaurants')
   const usersDb = collection(db,'UsersDetails')
 
+  const getMyRestaurants = async () =>{
+    try{
+      setLoading(true);
+        const q = query(restaurantsDb, where("owner", "==", currentUID));
+        const querySnapshot = await getDocs(q);
+        const filteredData = querySnapshot.docs.map((doc)=>({
+           ...doc.data(),
+           id: doc.id,
+       }))
+        setRestaurantData(filteredData)
+        setLoading(false);
+       } catch(err){
+        setLoading(false);
+           console.log(err)
+       }
+}
 
   useEffect(() => {
     let userType = localStorage.getItem('userType')
@@ -36,22 +54,7 @@ function DashboardRestaurant() {
   }, []);
 
   useEffect(() => {
-    const getMyRestaurants = async () =>{
-        try{
-          setLoading(true);
-            const q = query(restaurantsDb, where("owner", "==", currentUID));
-            const querySnapshot = await getDocs(q);
-            const filteredData = querySnapshot.docs.map((doc)=>({
-               ...doc.data(),
-               id: doc.id,
-           }))
-            setRestaurantData(filteredData)
-            setLoading(false);
-           } catch(err){
-            setLoading(false);
-               console.log(err)
-           }
-    }
+    
     const getUserData = async () =>{
       try{
           const q = query(usersDb, where("id", "==", currentUID));
@@ -82,25 +85,33 @@ function DashboardRestaurant() {
 
   const addNewRestaurant = async (e)=>{
       e.preventDefault()
-      setLoading(true);
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0]; 
       const imageRef = ref(storage, newRestaurantName);
-      try {
+      if(newRestaurantName && file){
+        try {
+        setLoading(true);
+        var newId = "id" + Math.random().toString(16).slice(2)
         await uploadBytes(imageRef, file);
         const imageUrl = await getDownloadURL(imageRef);
-        await setDoc(doc(db, "Restaurants", currentUID), {
+        await setDoc(doc(db, "Restaurants", newId), {
             name: newRestaurantName,
             image: imageUrl, 
             owner: currentUID
         });
         setLoading(false);
-        setAddRestaurant(false); 
-        window.location.reload();
+        setChangesSaved(true);
+        setNewRestaurantName('')
+        setTimeout(() => {
+          getMyRestaurants();
+          setChangesSaved(false);
+          setAddRestaurant(false); 
+        }, 2000);
     } catch (error) {
         setLoading(false);
         console.error("Error uploading image:", error);
     }
+      }
       
   }
 
@@ -139,7 +150,9 @@ function DashboardRestaurant() {
               ))}
             </div>
         }
-        
+
+      <ChangesSaved changesSaved={changesSaved}/>
+
     </div>
     
   );

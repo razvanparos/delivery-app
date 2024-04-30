@@ -44,8 +44,8 @@ function RestaurantIndividual(){
        navigate('/dashboard-restaurant')
     }
     const viewProduct = (props) =>{
-       setViewProductModal(true);
-       setProductData(props);
+        setViewProductModal(true);
+        setProductData(props);
     }
     // useEffect(()=>{
     //     console.log(productData)
@@ -61,7 +61,7 @@ function RestaurantIndividual(){
                 <img src={individualData?.image} alt="" className='individual-image'/>
                 <h2 className='restaurant-name'>{individualData?.name}</h2>
                 {userType==='restaurant' ?
-                    <button className='add-product-btn' onClick={()=>{setProductModal(true)}}>
+                    <button className='add-product-btn' onClick={()=>{setProductModal(true); window.scrollTo({ top: 0, behavior: 'smooth' });}}>
                         Add product<FaSquarePlus className='add-product-icon'/>
                     </button>: ''}
 

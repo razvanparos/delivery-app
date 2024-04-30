@@ -62,7 +62,7 @@
 .product-modal{
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
-    position: absolute;
+    position:fixed;
     bottom: 0px;
     width: 100%;
     max-width: 426px;
@@ -72,6 +72,7 @@
     flex-direction: column;
     align-items: center;
     padding-top: 140px;
+    overflow: hidden;
 }
 .open{
     height: 90%;
@@ -137,9 +138,10 @@
     padding: 8px 0px;
 }
 .product-view-modal{
+    overflow: hidden;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
-    position: absolute;
+    position:fixed;
     bottom: 0px;
     width: 100%;
     max-width: 426px;
