@@ -75,7 +75,7 @@
     overflow: hidden;
 }
 .open{
-    height: 90%;
+    height: 80%;
 }
 .close{
     height: 0px;
@@ -138,6 +138,7 @@
     padding: 8px 0px;
 }
 .product-view-modal{
+    color: white;
     overflow: hidden;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
@@ -149,9 +150,26 @@
     background-color: rgb(88, 88, 88);
     display: flex;
     flex-direction: column;
+
 }
 .product-modal-image{
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
     width: 100%;
+}
+.product-details{
+    padding: 20px;
+}
+.buttons-div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 20px;
+}
+.qty-div{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 12px;
+    
 }

@@ -21,6 +21,7 @@ function RestaurantIndividual(){
     const [loading, setLoading] = useState(false)
     const [productModal, setProductModal] = useState(false)
     const [viewProductModal, setViewProductModal] = useState(false)
+    const [productQty, setProductQty] = useState(1)
     const [productData, setProductData] = useState()
     const navigate = useNavigate();
 
@@ -93,8 +94,24 @@ function RestaurantIndividual(){
                 </form>
             </div>    
             <div className={`product-view-modal ${viewProductModal ? 'open':'close'}`}>
-                <button onClick={()=>{setViewProductModal(false)}} className='close-btn'><IoMdClose /></button>
+                <button onClick={()=>{setViewProductModal(false); setProductQty(1)}} className='close-btn'><IoMdClose /></button>
                 <img src={productData?.image} alt="" className='product-modal-image'/>
+                <div className='product-details'>
+                    <p className='product-name'>{productData?.name}</p>
+                    <p>{productData?.price},00 lei</p>
+                </div>
+                <div className='buttons-div'>
+                    <button>Delete product</button>
+                    <button>Edit Product</button>
+                </div>
+                <div className='buttons-div'>
+                    <div className='qty-div'>
+                        <button onClick={()=>{if(productQty>1){setProductQty(productQty-1)}}}>-</button>
+                        <p>{productQty}</p>
+                        <button onClick={()=>{setProductQty(productQty+1)}}>+</button>
+                    </div>
+                    <button>Add {productData?.price*productQty},00 lei</button>
+                </div>
             </div>    
         
         </div>
