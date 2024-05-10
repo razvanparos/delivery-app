@@ -144,7 +144,6 @@
     border-top-left-radius: 20px;
     position:fixed;
     bottom: 0px;
-    min-width: 100%;
     width: 100%;
     max-width: 426px;
     transition: 0.3s;
