@@ -13,10 +13,9 @@
     padding: 80px 0px;
     width: 100%;
     position: relative;
+    color: white;
 }
-.login-form h2{
-    color: black;
-}
+
 .login-button{
     width: 69%;
     background-color: rgb(50, 187, 120);

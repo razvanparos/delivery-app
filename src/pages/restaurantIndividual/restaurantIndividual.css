@@ -178,8 +178,17 @@
 }
 .product-name{
     text-transform: capitalize;
-
+    background-color: transparent;
+    border: 0px;
+    color: white;
+}   
+.editable{
+    pointer-events: all;
 }
+.noedit{
+    pointer-events: none;
+}
+
 .delete-btn{
     background-color: red;
     color: white;
@@ -199,5 +208,20 @@
     cursor: pointer;
 }
 .product-price{
-    font-size: 22px;
+    font-size: 22px !important;
+    background-color: transparent !important;
+    border: 0px;
+    color: white;
+    padding-right: 0px;
+    /* margin-right:-32px; */
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.price-div{
+    display: flex;
+    align-items: center;
+    font-size: 22px !important;
 }

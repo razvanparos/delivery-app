@@ -20,11 +20,15 @@ function RestaurantIndividual(){
     const [loading, setLoading] = useState(false)
     const [productModal, setProductModal] = useState(false)
     const [viewProductModal, setViewProductModal] = useState(false)
+    const [editMode, setEditMode] = useState(false)
     const [productQty, setProductQty] = useState(1)
     const [productData, setProductData] = useState()
     const [productsData, setProductsData] = useState()
     const [newProductName, setNewProductName] = useState('')
+    const [editProductName, setEditProductName] = useState('')
     const [newProductPrice, setNewProductPrice] = useState('')
+    const [editProductPrice, setEditProductPrice] = useState('')
+    const [editProductButtonText, setEditProductButtonText] = useState('Edit Product')
 
     const navigate = useNavigate();
 
@@ -50,16 +54,18 @@ function RestaurantIndividual(){
     const viewProduct = (props) =>{
         setViewProductModal(true);
         setProductData(props);
+        setEditProductName(props.name)
+        setEditProductPrice(props.price)
     }
     const addNewProduct = async (e)=>{
         e.preventDefault();
+        var newId = "id" + Math.random().toString(16).slice(2)
         const fileInput = document.getElementById('file-product');
         const file = fileInput.files[0]; 
-        const imageRef = ref(storage, newProductName);
+        const imageRef = ref(storage, newId);
         if(newProductName && newProductPrice && file ){
             try {
             setLoading(true);
-            var newId = "id" + Math.random().toString(16).slice(2)
             await uploadBytes(imageRef, file);
             const imageUrl = await getDownloadURL(imageRef);
             const restaurantRef = doc(db, 'Restaurants', restaurantId);
@@ -81,12 +87,10 @@ function RestaurantIndividual(){
             setLoading(false);
             console.error("Error uploading image:", error);
         }
-          }
+        }
     }
 
     const deleteProduct = async ()=>{
-        setViewProductModal(false);
-        setLoading(true);
         const restaurantRef = doc(db, 'Restaurants', restaurantId);
         const restaurantDoc = await getDoc(restaurantRef);
         const products = restaurantDoc.data().products;
@@ -96,7 +100,41 @@ function RestaurantIndividual(){
             await updateDoc(restaurantRef, { products });
         } 
         getIndividualData();
-        setLoading(false);
+        setTimeout(() => {
+            setViewProductModal(false);   
+        }, 500);
+        
+    }
+    const editProduct = async ()=>{
+        if(editProductButtonText==='Save Changes'){
+            if(editProductName && editProductPrice){
+                try {
+                    const restaurantRef = doc(db, 'Restaurants', restaurantId);
+                    const restaurantDoc = await getDoc(restaurantRef);
+                    const products = restaurantDoc.data().products;
+                    const productIndex = products.findIndex(product => product.id === productData.id);
+                    if (productIndex !== -1) {
+                        products[productIndex] = {
+                            id: productData.id,
+                            name: editProductName,
+                            price: Number(Math.floor(editProductPrice)), 
+                            image: productData.image 
+                        };
+                        await updateDoc(restaurantRef, { products });
+                    } 
+            } catch (error) {
+                setLoading(false);
+            }
+            setEditMode(false);
+            setEditProductButtonText('Edit Product')
+            getIndividualData();
+            }
+            
+        }else{
+            setEditProductButtonText('Save Changes')
+            setEditMode(true);
+            document.querySelector('#name-input').focus()
+        }
     }
 
     // useEffect(()=>{
@@ -149,19 +187,21 @@ function RestaurantIndividual(){
             }
             
             {loading?'':
-           
                 <div className={`product-view-modal ${viewProductModal ? 'open':'close'}`}>
                     <button onClick={()=>{setViewProductModal(false); setProductQty(1)}} className='close-btn'><IoMdClose /></button>
                     <img src={productData?.image} alt="" className='product-modal-image'/>
                     <div className='product-details'>
-                        <p className='product-name'>{productData?.name}</p>
+                        <input type="text" id='name-input' className={`product-name ${editMode?'editable':'noedit'}`} value={editProductName} onChange={(e)=>{setEditProductName(e.target.value)}} />
                         <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fuga deserunt, dolore minima, deleniti accusamus exercitationem voluptas ipsum necessitatibus asperiores numquam et cumque! Pariatur quasi nemo quas et corrupti! Atque, incidunt!</p>
-                        <p className='product-price'>{productData?.price},00 lei</p>
+                        <div className='price-div'>
+                            <input type="number" style={{ width: `${(editProductPrice.toString().length + 5) * 10}px`, marginRight:`${(editProductPrice.toString().length-35)}px`}} className={`product-price ${editMode?'editable':'noedit'}`} value={editProductPrice} onChange={(e)=>{const newValue=Math.min(parseInt(e.target.value),9999); setEditProductPrice(newValue)}} max={9999}/>
+                            <p>,00 lei</p>
+                        </div>
                     </div>
                     {userType === 'restaurant'?
                     <div className='buttons-div'>
                         <button className='delete-btn' onClick={deleteProduct}>Delete product</button>
-                        <button className='edit-btn'>Edit Product</button>
+                        <button className='edit-btn' onClick={editProduct}>{editProductButtonText}</button>
                     </div>
                     :
                     <div className='buttons-div'>
