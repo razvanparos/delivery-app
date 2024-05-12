@@ -9,10 +9,10 @@ import { FaUser } from "react-icons/fa";
 function NavbarClient(props){
     return(
         <div className={`navbar-client-div ${props.hideNav ? 'hideNav' : 'showNav' }` }>
-            <FaHouse className='icon'/>
-            <FaSearch className='icon'/>
-            <FaShoppingCart className='icon'/>
-            <FaUser className='icon'/>
+            <FaHouse className='icon' onClick={props.goHome}/>
+            <FaSearch className='icon' onClick={props.focusSearch}/>
+            <FaShoppingCart className='icon' onClick={props.showCart}/>
+            <FaUser className='icon' onClick={props.showProfile}/>
         </div>
         
     );

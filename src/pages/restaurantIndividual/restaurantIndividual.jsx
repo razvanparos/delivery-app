@@ -137,6 +137,9 @@ function RestaurantIndividual(){
         }
     }
 
+    const addProductToCart = ()=>{
+
+    }
     // useEffect(()=>{
     //     console.log(productsData)
     // },[productsData])
@@ -206,11 +209,11 @@ function RestaurantIndividual(){
                     :
                     <div className='buttons-div'>
                         <div className='qty-div'>
-                            <button onClick={()=>{if(productQty>1){setProductQty(productQty-1)}}}>-</button>
-                            <p>{productQty}</p>
-                            <button onClick={()=>{setProductQty(productQty+1)}}>+</button>
+                            <button className='qty-change' onClick={()=>{if(productQty>1){setProductQty(productQty-1)}}}>-</button>
+                            <p className='productQty'>{productQty}</p>
+                            <button className='qty-change' onClick={()=>{setProductQty(productQty+1)}}>+</button>
                         </div>
-                        <button>Add {productData?.price*productQty},00 lei</button>
+                        <button onClick={addProductToCart} className='add-to-cart-btn'>Add {productData?.price*productQty},00 lei</button>
                     </div>
                     }
                     
