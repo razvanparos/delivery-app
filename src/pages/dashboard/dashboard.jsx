@@ -149,7 +149,7 @@ function Dashboard(){
     return(
         <div className="dashboard-div dashboard">
             {clientTab==='home' ?
-                <div>
+                <div className='dashboard-div'>
                 <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}} />
                     <FaSearch className='search-bar-magnification'/>
                     <div className='restaurants-list'>
@@ -162,7 +162,7 @@ function Dashboard(){
                             />
                         ))}
                     </div>
-                    {restaurantData.length> 0 || loading ? '': <p style={{color:'white', fontSize:'24px'}}>No results</p>} 
+                    {restaurantData.length> 0 || loading ? '': <p style={{textAlign:'center', color:'white', fontSize:'24px', width:'100%'}}>No results</p>} 
                 </div>
             :''}
             
