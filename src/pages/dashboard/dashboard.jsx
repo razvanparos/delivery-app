@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './dashboard.css'
 import { useNavigate } from 'react-router-dom';
-import {getDocs, collection, query, where, doc, setDoc} from 'firebase/firestore';
+import {getDocs,getDoc, collection, query, where, doc, setDoc,updateDoc} from 'firebase/firestore';
 import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
@@ -13,12 +13,14 @@ function Dashboard(){
     const [isLoggedIn, setIsLoggedIn]=useState(localStorage.getItem('LoggedIn'));
     const [userData, setUserData]=useState();
     const [restaurantData, setRestaurantData]=useState([]);
+    const [userCart, setUserCart]=useState([]);
     const [loading, setLoading] = useState(false)
     const [hideNav, setHideNav] = useState(false)
     const [searchInput, setSearchInput]=useState('');
     const [initialScroll, setInitialScroll]=useState(0);
     const [originalRestaurantData, setOriginalRestaurantData]=useState([]);
     const [clientTab, setClientTab]=useState('home');
+    const [cartTotal, setCartTotal]=useState(0);
 
 
     const usersDb = collection(db,'UsersDetails')
@@ -120,11 +122,10 @@ function Dashboard(){
                    ...doc.data(),
                    id: doc.id,
                }))
-               let total=0;
-               console.log(filteredData[0].cart)
-               filteredData[0].cart.forEach((p)=>{total=total+(p.productPrice*p.productQty)})
-               console.log(total)
-                // setUserData(filteredData[0])
+                let total=0;
+                filteredData[0].cart.forEach((p)=>{total=total+(p.productPrice)})
+                setCartTotal(total)
+                setUserCart(filteredData[0].cart)
                } catch(err){
                    console.log(err)
                }
@@ -142,6 +143,23 @@ function Dashboard(){
     }
     const showProfile=()=>{
         setClientTab('profile')
+        
+    }
+    const deleteCartProduct= async(item)=>{
+        console.log(item)
+        try {
+            const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
+            const userDoc = await getDoc(userRef);
+            const cart = userDoc.data().cart;
+            const productIndex = cart.findIndex(c => c.id === item.id);
+            if (productIndex !== -1) {
+                cart.splice(productIndex, 1);
+                await updateDoc(userRef, { cart });
+            } 
+            showCart();
+    } catch (error) {
+        console.log(error)
+    }
         
     }
         
@@ -168,7 +186,14 @@ function Dashboard(){
             
             {clientTab==='cart' ?
                 <div>
-                    aici e cart
+                     {loading ? <Loader/> : userCart.map((item) => (
+                        <div key={item.id}>
+                            <button onClick={()=>{deleteCartProduct(item)}}>delete</button>
+                            <p>{`${item.productName} - ${item.productPrice},00 lei`}</p>
+                        </div>
+                           
+                        ))}
+                        <p>{`TOTAL: ${cartTotal},00 lei`}</p>
                 </div>
             :''}
 

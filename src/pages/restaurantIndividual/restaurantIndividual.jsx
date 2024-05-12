@@ -137,9 +137,26 @@ function RestaurantIndividual(){
         }
     }
 
-    const addProductToCart = ()=>{
-
+    const addProductToCart = async(item)=>{
+        for(let i=0;i<productQty;i++){
+           try {
+            var newId = "id" + Math.random().toString(16).slice(2)
+            const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
+            await updateDoc(userRef,{
+                cart: arrayUnion({
+                    id: newId,
+                    productName: item.name,
+                    productPrice: Number(item.price),
+                })
+            });
+            } catch (error) {
+                console.log(error)
+            } 
+        }
+        
     }
+
+
     // useEffect(()=>{
     //     console.log(productsData)
     // },[productsData])
@@ -213,7 +230,7 @@ function RestaurantIndividual(){
                             <p className='productQty'>{productQty}</p>
                             <button className='qty-change' onClick={()=>{setProductQty(productQty+1)}}>+</button>
                         </div>
-                        <button onClick={addProductToCart} className='add-to-cart-btn'>Add {productData?.price*productQty},00 lei</button>
+                        <button onClick={()=>{addProductToCart(productData)}} className='add-to-cart-btn'>Add {productData?.price*productQty},00 lei</button>
                     </div>
                     }
                     
