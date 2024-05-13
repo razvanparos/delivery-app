@@ -11,7 +11,11 @@ function NavbarClient(props){
         <div className={`navbar-client-div ${props.hideNav ? 'hideNav' : 'showNav' }` }>
             <FaHouse className='icon' onClick={props.goHome}/>
             <FaSearch className='icon' onClick={props.focusSearch}/>
-            <FaShoppingCart className='icon' onClick={props.showCart}/>
+            <div style={{position:'relative'}}>
+                {props.cartQty>0?<div className='cart-qty'>{props.cartQty}</div>:''}
+                <FaShoppingCart className='icon' onClick={props.showCart}/>
+            </div>
+            
             <FaUser className='icon' onClick={props.showProfile}/>
         </div>
         

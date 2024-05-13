@@ -11,6 +11,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
 import { IoMdClose } from "react-icons/io";
+import { FaCheck } from "react-icons/fa";
 
 function RestaurantIndividual(){
     const {restaurantName, restaurantId}  = useParams();
@@ -18,6 +19,7 @@ function RestaurantIndividual(){
     const [userType, setUserType]=useState(localStorage.getItem('userType'));
     const restaurantsDb = collection(db,'Restaurants')
     const [loading, setLoading] = useState(false)
+    const [showDialog, setShowDialog] = useState(false)
     const [productModal, setProductModal] = useState(false)
     const [viewProductModal, setViewProductModal] = useState(false)
     const [editMode, setEditMode] = useState(false)
@@ -147,13 +149,18 @@ function RestaurantIndividual(){
                     id: newId,
                     productName: item.name,
                     productPrice: Number(item.price),
+                    image: item.image
                 })
             });
+             
             } catch (error) {
                 console.log(error)
             } 
         }
-        
+        setShowDialog(true); 
+        setTimeout(() => {
+            setShowDialog(false); 
+          }, 3000);
     }
 
 
@@ -234,10 +241,10 @@ function RestaurantIndividual(){
                     </div>
                     }
                     
-                
+                   
                 </div>
             }
-       
+            <div className={showDialog?'dialog-box-open':'dialog-box-closed'}><FaCheck/>Added to cart!</div>
         </div>
         
     );

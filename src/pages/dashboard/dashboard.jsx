@@ -7,6 +7,7 @@ import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
 import NavbarClient from '../../components/NavbarClient/NavbarClient';
 import { FaSearch } from "react-icons/fa";
+import { IoTrashOutline } from "react-icons/io5";
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ function Dashboard(){
     const [originalRestaurantData, setOriginalRestaurantData]=useState([]);
     const [clientTab, setClientTab]=useState('home');
     const [cartTotal, setCartTotal]=useState(0);
+    const [cartQty, setCartQty]=useState(0);
 
 
     const usersDb = collection(db,'UsersDetails')
@@ -35,22 +37,25 @@ function Dashboard(){
           navigate(`/dashboard-${userType}`)
         }
       }, []);
-
-    useEffect(() => {
-        let currentUID = localStorage.getItem('currentUserId')
-        const getUserData = async () =>{
-            try{
-                const q = query(usersDb, where("id", "==", currentUID));
-                const querySnapshot = await getDocs(q);
-                const filteredData = querySnapshot.docs.map((doc)=>({
-                   ...doc.data(),
-                   id: doc.id,
-               }))
-                setUserData(filteredData[0])
-               } catch(err){
+    const getUserData = async () =>{
+        try{
+            const q = query(usersDb, where("id", "==", localStorage.getItem('currentUserId')));
+            const querySnapshot = await getDocs(q);
+            const filteredData = querySnapshot.docs.map((doc)=>({
+                ...doc.data(),
+                id: doc.id,
+            }))
+            setUserData(filteredData[0])
+            
+            setCartQty(filteredData[0].cart.length)
+            
+            } catch(err){
                    console.log(err)
-               }
+             }    
         }
+    
+      useEffect(() => {
+        
         getUserData();
         const getRestaurantData = async () =>{
             try{
@@ -146,7 +151,6 @@ function Dashboard(){
         
     }
     const deleteCartProduct= async(item)=>{
-        console.log(item)
         try {
             const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
             const userDoc = await getDoc(userRef);
@@ -157,6 +161,7 @@ function Dashboard(){
                 await updateDoc(userRef, { cart });
             } 
             showCart();
+            getUserData();
     } catch (error) {
         console.log(error)
     }
@@ -167,7 +172,7 @@ function Dashboard(){
     return(
         <div className="dashboard-div dashboard">
             {clientTab==='home' ?
-                <div className='dashboard-div'>
+                <div className='home-dashboard'>
                 <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}} />
                     <FaSearch className='search-bar-magnification'/>
                     <div className='restaurants-list'>
@@ -185,15 +190,31 @@ function Dashboard(){
             :''}
             
             {clientTab==='cart' ?
-                <div>
-                     {loading ? <Loader/> : userCart.map((item) => (
-                        <div key={item.id}>
-                            <button onClick={()=>{deleteCartProduct(item)}}>delete</button>
-                            <p>{`${item.productName} - ${item.productPrice},00 lei`}</p>
-                        </div>
-                           
+                <div className='cart-div'>
+                    <div className='cart-item-list'>
+                        {loading ? <Loader/> : userCart.map((item) => (
+                            <div key={item.id} className='cart-item-div'>
+                                <img src={item.image} alt="" className='cart-item-img'/>
+                                <div >
+                                    <p className='cart-item-name'>{item.productName}</p>
+                                    <p className='cart-item-price'>{`${item.productPrice},00 lei`}</p>
+                                    
+                                </div>
+                                <button onClick={()=>{deleteCartProduct(item)}} className='trash'><IoTrashOutline className='trash'/></button>
+
+                            </div>
                         ))}
+                    </div>
+                    {cartQty>0 ?  <div className='cart-div-bottom'>
                         <p>{`TOTAL: ${cartTotal},00 lei`}</p>
+                        <button className='place-order-btn'>Place order!</button>
+                     </div>
+                    :<div className='empty'>
+                        <p>{`Empty Cart`}</p>
+                        <button onClick={()=>{setClientTab('home')}}>Add products</button>
+                    </div>}
+                    
+                    
                 </div>
             :''}
 
@@ -204,7 +225,7 @@ function Dashboard(){
                 </div>
             :''}
             
-            <NavbarClient hideNav={hideNav} goHome={()=>{setClientTab('home')}} showCart={showCart} focusSearch={focusSearch} showProfile={showProfile}/>
+            <NavbarClient hideNav={hideNav} cartQty={cartQty} goHome={()=>{setClientTab('home')}} showCart={showCart} focusSearch={focusSearch} showProfile={showProfile}/>
             
         </div>
     );
