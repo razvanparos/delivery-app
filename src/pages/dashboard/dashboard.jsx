@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './dashboard.css'
 import { useNavigate } from 'react-router-dom';
-import {getDocs,getDoc, collection, query, where, doc, setDoc,updateDoc} from 'firebase/firestore';
+import {getDocs,getDoc, collection, query, where, doc, setDoc,updateDoc,arrayUnion} from 'firebase/firestore';
 import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
@@ -9,6 +9,7 @@ import NavbarClient from '../../components/NavbarClient/NavbarClient';
 import { FaSearch } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { IoMdClose } from "react-icons/io";
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -18,16 +19,24 @@ function Dashboard(){
     const [userCart, setUserCart]=useState([]);
     const [loading, setLoading] = useState(false)
     const [hideNav, setHideNav] = useState(false)
+    const [orderModal, setOrderModal] = useState(false)
     const [searchInput, setSearchInput]=useState('');
     const [initialScroll, setInitialScroll]=useState(0);
     const [originalRestaurantData, setOriginalRestaurantData]=useState([]);
     const [clientTab, setClientTab]=useState('home');
     const [cartTotal, setCartTotal]=useState(0);
     const [cartQty, setCartQty]=useState(0);
+    const [tip, setTip]=useState(0);
+    const [delivery, setDelivery]=useState(3);
+    const [address, setAddress]=useState('');
+    const [addressError, setAddressError]=useState(false);
+    const [payment, setPayment]=useState('Cash');
 
 
     const usersDb = collection(db,'UsersDetails')
     const restaurantsDb = collection(db,'Restaurants')
+
+
    
     useEffect(() => {
         let userType = localStorage.getItem('userType')
@@ -155,6 +164,34 @@ function Dashboard(){
         setClientTab('profile')
         
     }
+    const confirmOrder=async()=>{
+       if(address){
+            setAddressError(false);
+            var newId = "id" + Math.random().toString(16).slice(2)
+                try {
+                // setLoading(true);
+                await setDoc(doc(db, "Orders", newId), {
+                    id: newId,
+                    phone: userData.phone,
+                    address: address,
+                    products: userCart,
+                    paymentMethod: payment,
+                    total: delivery+tip+cartTotal,
+                    orderedBy: localStorage.getItem('currentUserId'),
+                    status:'ordered'
+                  });
+                // setLoading(false);
+                setOrderModal(false); 
+                setAddress('')
+        } catch (error) {
+            // setLoading(false);
+        }
+        
+
+       }else {
+            setAddressError(true)
+       }
+    }
     const deleteCartProduct= async(item)=>{
         try {
             const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
@@ -195,11 +232,11 @@ function Dashboard(){
             :''}
             
             {clientTab==='cart' ?
-                <div className='cart-div'>
-                 <div className='individual-back' onClick={back}>
+                <div className='cart-div' >
+                 <div className={`individual-back ${orderModal?'pointer-none':''}`} onClick={back}>
                     <FaArrowLeftLong />
                 </div>
-                    <div className='cart-item-list'>
+                    <div className={`cart-item-list ${orderModal?'pointer-none':''}`} >
                         {loading ? <Loader/> : userCart.map((item) => (
                             <div key={item.id} className='cart-item-div'>
                                 <img src={item.image} alt="" className='cart-item-img'/>
@@ -215,14 +252,45 @@ function Dashboard(){
                     </div>
                     {cartQty>0 ?  <div className='cart-div-bottom'>
                         <p>{`TOTAL: ${cartTotal},00 lei`}</p>
-                        <button className='place-order-btn'>Place order!</button>
+                        <button className='place-order-btn' onClick={()=>{setOrderModal(true)}}>Continue</button>
                      </div>
                     :<div className='empty'>
                         <p>Empty Cart</p>
                         <button onClick={()=>{setClientTab('home')}}>Add products</button>
                     </div>}
-                    
-                    
+                     <div className={`order-modal ${orderModal?'open':'close'}`}>
+                        <button onClick={()=>{setOrderModal(false)}} className='close-btn'><IoMdClose /></button>
+                        <div className='order-review'>
+                            <p>Phone: {userData?.phone}</p>
+                            <div>
+                                <p htmlFor="">Address:</p>
+                                <textarea  value={address} onChange={(e)=>{setAddress(e.target.value)}} className={`address-area ${addressError?'error-area':''}`} name="" id="" cols="30" rows="3" ></textarea>
+                            </div>
+                            <div style={{display:'flex', flexDirection:'column', rowGap:'8px'}}>
+                                <p>Tip the courier?</p>
+                                <div className='flex-space'>
+                                    <button onClick={()=>{setTip(0)}} className={`tip-btn ${tip===0 ?'active':''}`}>No tips</button>
+                                    <button onClick={()=>{setTip(3)}} className={`tip-btn ${tip===3 ?'active':''}`}>3,00 lei</button>
+                                    <button onClick={()=>{setTip(5)}} className={`tip-btn ${tip===5 ?'active':''}`}>5,00 lei</button>
+                                    <button onClick={()=>{setTip(10)}} className={`tip-btn ${tip===10 ?'active':''}`}>10,00 lei</button>
+                                </div>
+                            </div>
+                            <div style={{display:'flex', flexDirection:'column', rowGap:'4px'}}>
+                                <div className='flex-space'><p>Subtotal: </p><p>{cartTotal},00 lei</p></div>
+                                <div className='flex-space'><p>Tip:</p><p>{tip},00 lei</p></div>
+                                <div className='flex-space'><p>Delivery:</p><p>{delivery},00 lei</p></div>
+                                <div className='flex-space'><p>Total:</p><p>{delivery+tip+cartTotal},00 lei</p></div>
+                            </div>
+                            <div style={{display:'flex', flexDirection:'column', rowGap:'4px'}}>
+                                <p>Payment method:</p>
+                                <div className='payment-div'>
+                                    <button onClick={()=>{setPayment('Cash')}} className={`${payment==='Cash'?'active':'inactive'}`}>Cash</button>
+                                    <button onClick={()=>{setPayment('Card')}} className={`${payment==='Card'?'active':'inactive'}`}>Card</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onClick={confirmOrder} className='confirm-order-btn'>Confirm Order</button>
+                    </div>
                 </div>
             :''}
 

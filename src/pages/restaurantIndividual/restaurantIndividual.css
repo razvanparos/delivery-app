@@ -289,4 +289,7 @@ input::-webkit-inner-spin-button {
     .product-view-modal{
         left: 0px;
     }
+    .order-modal{
+        left: 0px;
+    }
 }

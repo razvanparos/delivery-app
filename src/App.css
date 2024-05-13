@@ -17,6 +17,12 @@
     align-items: center;
     justify-content: center;
 }
+.flex-space{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 4px;
+}
 body{
     background-color: rgba(0, 0, 0, 0.822);
     scroll-behavior: smooth;
