@@ -210,7 +210,7 @@ function Dashboard(){
                         <button className='place-order-btn'>Place order!</button>
                      </div>
                     :<div className='empty'>
-                        <p>{`Empty Cart`}</p>
+                        <p>Empty Cart</p>
                         <button onClick={()=>{setClientTab('home')}}>Add products</button>
                     </div>}
                     

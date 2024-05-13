@@ -1,5 +1,5 @@
 .dashboard{
-    padding: 20px;
+    padding: 8px 20px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -14,7 +14,7 @@
 }
 .dashboard-div{
     position:relative;
-    height: 94vh;
+    height: 90vh;
 }
 .search-bar{
     width: 100%;
@@ -101,7 +101,7 @@
     display: flex;
     flex-direction: column;
     row-gap: 12px;
-    font-size: 24px;
+    font-size: 32px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -112,6 +112,7 @@
     border: 0px;
     padding: 8px;
     border-radius: 10px;
+    font-size: 18px;
 }
 @media(max-width:350px){
     .cart-item-div{
