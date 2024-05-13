@@ -8,6 +8,7 @@ import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
 import NavbarClient from '../../components/NavbarClient/NavbarClient';
 import { FaSearch } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -102,10 +103,10 @@ function Dashboard(){
             setHideNav(true)
         }
         if(clientTab==='cart'){
-            setHideNav(false)
+            setHideNav(true)
         }
         if(clientTab==='profile'){
-            setHideNav(false)
+            setHideNav(true)
         }
         
     
@@ -117,7 +118,11 @@ function Dashboard(){
         localStorage.setItem('currentUserId',0)
         navigate('/');
     }
+    const back = () =>{
+        setClientTab('home')
+     }
     const showCart = () =>{
+        setHideNav(true)
         setClientTab('cart')
         const getUserCart = async () =>{
             try{
@@ -191,6 +196,9 @@ function Dashboard(){
             
             {clientTab==='cart' ?
                 <div className='cart-div'>
+                 <div className='individual-back' onClick={back}>
+                    <FaArrowLeftLong />
+                </div>
                     <div className='cart-item-list'>
                         {loading ? <Loader/> : userCart.map((item) => (
                             <div key={item.id} className='cart-item-div'>
