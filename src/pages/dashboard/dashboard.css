@@ -203,7 +203,7 @@
         padding: 8px;
     }
 }
-@media(max-height:750px){
+@media(max-height:800px){
     .order-modal{
         padding-top: 40px;
     }

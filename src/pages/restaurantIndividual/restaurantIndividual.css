@@ -76,7 +76,7 @@
     overflow: hidden;
 }
 .open{
-    height: 85%;
+    min-height: 90%;
 }
 .close{
     height: 0px;
@@ -159,6 +159,8 @@
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
     width: 100%;
+    max-height: 280px;
+    object-fit: cover;
 }
 .product-details{
     padding: 20px;
