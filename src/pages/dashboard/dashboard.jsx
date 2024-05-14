@@ -10,6 +10,8 @@ import { FaSearch } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
+import { FaRegEdit } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -30,7 +32,10 @@ function Dashboard(){
     const [delivery, setDelivery]=useState(3);
     const [address, setAddress]=useState('');
     const [addressError, setAddressError]=useState(false);
+    const [editPhoneMode, setEditPhoneMode]=useState(false);
     const [payment, setPayment]=useState('Cash');
+    const [profilePhone, setProfilePhone]=useState('');
+
 
 
     const usersDb = collection(db,'UsersDetails')
@@ -56,7 +61,7 @@ function Dashboard(){
                 id: doc.id,
             }))
             setUserData(filteredData[0])
-            
+            setProfilePhone(filteredData[0].phone);
             setCartQty(filteredData[0].cart.length)
             
             } catch(err){
@@ -67,6 +72,7 @@ function Dashboard(){
       useEffect(() => {
         
         getUserData();
+        
         const getRestaurantData = async () =>{
             try{
                 setLoading(true);
@@ -167,6 +173,21 @@ function Dashboard(){
         setClientTab('profile')
         
     }
+    const editPhone=async()=>{
+        if(editPhoneMode===false){
+            setEditPhoneMode(true)
+            document.querySelector('.profile-phone').focus();
+        }else {
+            if(profilePhone){
+                const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
+                await updateDoc(userRef, { phone:profilePhone });  
+                setEditPhoneMode(false)
+                getUserData();
+            }
+        }
+        
+    }
+
     const confirmOrder=async()=>{
        if(address){
             setAddressError(false);
@@ -298,9 +319,13 @@ function Dashboard(){
             :''}
 
             {clientTab==='profile' ?
-                <div>
-                    aici e profile
-                    <button onClick={signOut}>sign out</button>
+                <div className='profile-div'>
+                    <h2>{userData.email}</h2>
+                    <div>
+                        <input className={`${editPhoneMode?'editable':'noedit'} profile-phone`} type="number" value={profilePhone} onChange={(e)=>{setProfilePhone(e.target.value)}} />
+                        {editPhoneMode?<FaCheck style={{fontSize:'20px', marginLeft:'12px'}} onClick={editPhone}/>:<FaRegEdit onClick={editPhone} style={{fontSize:'20px', marginLeft:'12px'}}/>}
+                    </div>
+                    <button className='sign-out' onClick={signOut}>Log out</button>
                 </div>
             :''}
             

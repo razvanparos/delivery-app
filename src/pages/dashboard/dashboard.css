@@ -194,6 +194,31 @@
 .inactive{
     background-color: gray;
 }
+.profile-div{
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    color: white;
+}
+.profile-phone{
+    font-weight: 500;
+    margin-bottom: 24px;
+    background-color: transparent !important;
+    font-size: 20px !important;
+    padding: 0px !important;
+    max-width: 130px !important;
+}
+
+.sign-out{
+    color: white;
+    background-color: var(--green);
+    border: 0px;
+    padding: 8px 0px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 20px;
+}
 @media(max-width:350px){
     .cart-item-div{
         padding-right: 10px;
@@ -205,6 +230,7 @@
 @media(max-height:800px){
     .order-modal{
         padding-top: 40px;
+        transition: 0.3s;
     }
     .cart-item-list{
         max-height: 70%;

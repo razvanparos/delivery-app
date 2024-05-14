@@ -76,10 +76,12 @@
     overflow: hidden;
 }
 .open{
+    height: 90%;
     min-height: 90%;
 }
 .close{
     height: 0px;
+    min-height: 0%;
     visibility:hidden;
 }
 .close-btn{
