@@ -111,6 +111,9 @@ function Dashboard(){
         if(window.scrollY > maxScroll-150){
             setHideNav(true)
         }
+        if(window.scrollY < maxScroll-400){
+            setHideNav(false)
+        }
         if(clientTab==='cart'){
             setHideNav(true)
         }
