@@ -5,6 +5,7 @@
     align-items: center;
     flex-direction: column;
     row-gap: 12px;
+    height: 100%;
 }
 .home-dashboard{
     width: 100%;
@@ -13,7 +14,7 @@
 }
 .dashboard-div{
     position:relative;
-    height: 100vh;
+    height: 100%;
 }
 .search-bar{
     width: 100%;
@@ -195,6 +196,7 @@
     background-color: gray;
 }
 .profile-div{
+    border: 1px solid red;
     padding-top: 24px;
     display: flex;
     flex-direction: column;

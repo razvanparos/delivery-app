@@ -257,6 +257,7 @@ input::-webkit-inner-spin-button {
     cursor: pointer;
 }
 .dialog-box-open{
+    z-index: 4;
     display: flex;
     align-items: center;
     justify-content: space-between;
