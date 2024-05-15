@@ -105,8 +105,14 @@ function Dashboard(){
 
   
     window.addEventListener('scroll',function(){
-   
         let maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        if(clientTab==='cart'){
+            setHideNav(true)
+        }
+        if(clientTab==='profile'){
+            setHideNav(true)
+        }
+       
         if(initialScroll >  window.scrollY){
             setInitialScroll( window.scrollY)
             setHideNav(false)
@@ -121,12 +127,7 @@ function Dashboard(){
         if(window.scrollY < maxScroll-400){
             setHideNav(false)
         }
-        if(clientTab==='cart'){
-            setHideNav(true)
-        }
-        if(clientTab==='profile'){
-            setHideNav(true)
-        }
+        
         
     
     })
@@ -332,6 +333,9 @@ function Dashboard(){
 
             {clientTab==='profile' ?
                 <div className='profile-div'>
+                     <div className={`individual-back ${orderModal?'pointer-none':''}`} onClick={back}>
+                        <FaArrowLeftLong />
+                    </div>
                     <h2>{userData.email}</h2>
                     <div>
                         <input className={`${editPhoneMode?'editable':'noedit'} profile-phone`} type="number" value={profilePhone} onChange={(e)=>{setProfilePhone(e.target.value)}} />
