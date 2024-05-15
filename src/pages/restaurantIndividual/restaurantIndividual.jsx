@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
 import { IoMdClose } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
 function RestaurantIndividual(){
     const {restaurantName, restaurantId}  = useParams();
@@ -20,6 +21,7 @@ function RestaurantIndividual(){
     const restaurantsDb = collection(db,'Restaurants')
     const [loading, setLoading] = useState(false)
     const [showDialog, setShowDialog] = useState(false)
+    const [cartError, setCartError] = useState(false)
     const [productModal, setProductModal] = useState(false)
     const [viewProductModal, setViewProductModal] = useState(false)
     const [editMode, setEditMode] = useState(false)
@@ -140,27 +142,48 @@ function RestaurantIndividual(){
     }
 
     const addProductToCart = async(item)=>{
-        for(let i=0;i<productQty;i++){
-           try {
-            var newId = "id" + Math.random().toString(16).slice(2)
+        const productLoop=async()=>{
+            for(let i=0;i<productQty;i++){
+                try {
+                    var newId = "id" + Math.random().toString(16).slice(2)
+                    const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
+                    await updateDoc(userRef,{
+                        cart: arrayUnion({
+                            id: newId,
+                            productName: item.name,
+                            productPrice: Number(item.price),
+                            image: item.image,
+                            restaurant: restaurantName
+                        })
+                    });
+                    setShowDialog(true); 
+                    setTimeout(() => {
+                        setShowDialog(false); 
+                    }, 3000);
+                
+                } catch (error) {
+                    console.log(error)
+                } 
+         } 
+         }
+        try{
             const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
-            await updateDoc(userRef,{
-                cart: arrayUnion({
-                    id: newId,
-                    productName: item.name,
-                    productPrice: Number(item.price),
-                    image: item.image
-                })
-            });
-             
-            } catch (error) {
-                console.log(error)
-            } 
-        }
-        setShowDialog(true); 
-        setTimeout(() => {
-            setShowDialog(false); 
-          }, 3000);
+            const querySnapshot = await getDoc(userRef);
+            let cartQty=querySnapshot.data().cart.length;
+            if(cartQty===0){
+               productLoop();
+            }else if(querySnapshot.data().cart[0].restaurant===restaurantName){
+                productLoop();
+            }else {
+                setCartError(true)
+                setTimeout(() => {
+                    setCartError(false)
+                }, 3000);
+            }
+            
+           } catch(err){
+               console.log(err)
+           }
     }
 
 
@@ -245,6 +268,7 @@ function RestaurantIndividual(){
                 </div>
             }
             <div className={showDialog?'dialog-box-open':'dialog-box-closed'}><FaCheck/>Added to cart!</div>
+            <div className={cartError?'dialog-cart-open':'dialog-cart-closed'}><IoClose className='x'/>Only one restaurant per order</div>
         </div>
         
     );

@@ -32,6 +32,7 @@ function Dashboard(){
     const [delivery, setDelivery]=useState(3);
     const [address, setAddress]=useState('');
     const [addressError, setAddressError]=useState(false);
+    const [orderDialog, setOrderDialog]=useState(false);
     const [editPhoneMode, setEditPhoneMode]=useState(false);
     const [payment, setPayment]=useState('Cash');
     const [profilePhone, setProfilePhone]=useState('');
@@ -139,10 +140,7 @@ function Dashboard(){
     const back = () =>{
         setClientTab('home')
      }
-    const showCart = () =>{
-        setHideNav(true)
-        setClientTab('cart')
-        const getUserCart = async () =>{
+    const getUserCart = async () =>{
             try{
                 const q = query(usersDb, where("id", "==", localStorage.getItem('currentUserId')));
                 const querySnapshot = await getDocs(q);
@@ -158,6 +156,10 @@ function Dashboard(){
                    console.log(err)
                }
         }
+     const showCart = () =>{
+        setHideNav(true)
+        setClientTab('cart')
+        
         getUserCart();
     }
     
@@ -187,31 +189,40 @@ function Dashboard(){
         }
         
     }
-
+    const emptyCart = async()=>{
+        try {
+            const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
+            await updateDoc(userRef, { cart:[] });  
+    } catch (error) {
+        console.log(error)
+    }
+    }
     const confirmOrder=async()=>{
        if(address){
             setAddressError(false);
             var newId = "id" + Math.random().toString(16).slice(2)
                 try {
-                // setLoading(true);
                 await setDoc(doc(db, "Orders", newId), {
                     id: newId,
                     phone: userData.phone,
-                    address: address,
+                    pickUpAddress: address,
+                    fromRestaurant: userCart[0].restaurant,
                     products: userCart,
                     paymentMethod: payment,
                     total: delivery+tip+cartTotal,
                     orderedBy: localStorage.getItem('currentUserId'),
                     status:'ordered'
                   });
-                // setLoading(false);
                 setOrderModal(false); 
-                setAddress('')
+                setOrderDialog(true); 
+                setTimeout(() => {
+                    setOrderDialog(false); 
+                    window.location.reload();
+                }, 2000);
+                emptyCart();
         } catch (error) {
-            // setLoading(false);
+            console.log(error)
         }
-        
-
        }else {
             setAddressError(true)
        }
@@ -233,6 +244,7 @@ function Dashboard(){
     }
         
     }
+    
         
 
     return(
@@ -330,7 +342,7 @@ function Dashboard(){
             :''}
             
             <NavbarClient hideNav={hideNav} cartQty={cartQty} goHome={()=>{setClientTab('home')}} showCart={showCart} focusSearch={focusSearch} showProfile={showProfile}/>
-            
+            <div className={orderDialog?'dialog-order-open':'dialog-order-closed'}><FaCheck/>Order successfully placed!</div>
         </div>
     );
     
