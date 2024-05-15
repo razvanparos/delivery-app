@@ -45,9 +45,9 @@
 }
 .cart-div{
     overflow: hidden;
-    margin-top: 70px;
+    /* margin-top: 70px; */
     width: 100%;
-    max-height: 90vh;
+    max-height: 95vh;
     color: white;
     display: flex;
     flex-direction: column;

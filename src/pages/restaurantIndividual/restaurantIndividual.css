@@ -56,9 +56,13 @@
     background-color: rgba(59, 56, 56, 0.877);
     z-index: 2;
     color: white;
-    position: absolute;
+    margin-bottom: 20px;
+    /* position: absolute;
     top: 20px;
-    left: 20px;
+    left: 20px; */
+}
+.individual-back svg{
+    min-height: 40px;
 }
 .product-modal{
     border-top-right-radius: 20px;
