@@ -239,7 +239,7 @@
         margin-bottom: 30px;
     }
     .open{
-        height: 97%;
+        height: 97% !important;
         z-index: 3;
     }
     .cart-div{

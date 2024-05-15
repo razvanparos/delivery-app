@@ -268,7 +268,7 @@ input::-webkit-inner-spin-button {
     position: absolute;
     color: white;
     left: 50%;
-    top: 20px;
+    top: 35px;
     transform: translateX(-50%);
     border-radius: 5px;
     font-weight: 700;
@@ -286,18 +286,19 @@ input::-webkit-inner-spin-button {
     transform: translateX(-50%);
 }
 .dialog-cart-open{
+    z-index: 4;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     column-gap: 12px;
     transition: 0.3s;
     background-color: red;
-    max-width: fit-content;
+    width: 90%;
     padding: 4px 20px;
     position: absolute;
     color: white;
     left: 50%;
-    top: 20px;
+    top: 35px;
     transform: translateX(-50%);
     border-radius: 5px;
     font-weight: 700;
@@ -306,12 +307,12 @@ input::-webkit-inner-spin-button {
 .dialog-cart-closed{
     transition: 0.3s;
     background-color: red;
-    max-width: fit-content;
+    width: 90%;
     padding: 6px 24px;
     position: absolute;
     color: white;
     left: 50%;
-    top: -60px;
+    top: -70px;
     transform: translateX(-50%);
 }
 .dialog-order-open{
@@ -328,7 +329,7 @@ input::-webkit-inner-spin-button {
     position: absolute;
     color: white;
     left: 50%;
-    top: 20px;
+    top: 35px;
     transform: translateX(-50%);
     border-radius: 5px;
     font-weight: 700;
@@ -342,7 +343,7 @@ input::-webkit-inner-spin-button {
     position: absolute;
     color: white;
     left: 50%;
-    top: -60px;
+    top: -70px;
     transform: translateX(-50%);
 }
 .x{
