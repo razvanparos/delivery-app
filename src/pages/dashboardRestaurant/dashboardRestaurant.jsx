@@ -2,13 +2,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './dashboardRestaurant.css';
 import { useEffect, useState } from 'react';
-import {getDocs, collection, query, where, doc, setDoc, addDoc} from 'firebase/firestore';
+import {getDocs, collection, query, where, doc, setDoc, orderBy} from 'firebase/firestore';
 import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
 import {storage} from '../../firebase-config'
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ChangesSaved from '../../components/ChangesSaved/ChangesSaved';
+import { IoMdClose } from "react-icons/io";
+import { disablePageScroll, enablePageScroll, scrollLock  } from 'scroll-lock';
 
 
 
@@ -18,14 +20,32 @@ function DashboardRestaurant() {
   const [currentUID, setCurrentUID]=useState(localStorage.getItem('currentUserId'));
   const [addRestaurant, setAddRestaurant]=useState(false);
   const [restaurantData, setRestaurantData]=useState([]);
+  const [myRestaurantsId, setMyRestaurantsId]=useState([]);
   const [userData, setUserData]=useState();
   const [loading, setLoading] = useState(false)
   const [changesSaved, setChangesSaved] = useState(false)
+  const [receivedOrders, setReceivedOrders] = useState(false)
   const [newRestaurantName, setNewRestaurantName] = useState('')
+  const [myReceivedOrdersData, setMyReceivedOrdersData] = useState([])
+  const [newRestaurantAddress, setNewRestaurantAddress] = useState('')
 
   const restaurantsDb = collection(db,'Restaurants')
   const usersDb = collection(db,'UsersDetails')
-
+  const ordersDb = collection(db,'Orders')
+  
+  const myReceivedOrders = async (myRestaurants) =>{
+    try{
+        const q = query(ordersDb, where("orderedTo", "in", myRestaurants),orderBy('orderDate','desc'),orderBy('orderTime','desc'));
+        const querySnapshot = await getDocs(q);
+        const filteredData = querySnapshot.docs.map((doc)=>({
+            ...doc.data(),
+            id: doc.id,
+        }))
+        setMyReceivedOrdersData(filteredData)
+        } catch(err){
+               console.log(err)
+         }    
+    }
   const getMyRestaurants = async () =>{
     try{
       setLoading(true);
@@ -35,14 +55,19 @@ function DashboardRestaurant() {
            ...doc.data(),
            id: doc.id,
        }))
+        let myRestaurants=[];
+        filteredData.forEach((r)=>{myRestaurants.push(r.id)})
+        // console.log(myRestaurants)
         setRestaurantData(filteredData)
+        
+        myReceivedOrders(myRestaurants)
+        
         setLoading(false);
        } catch(err){
         setLoading(false);
            console.log(err)
        }
 }
-
   useEffect(() => {
     let userType = localStorage.getItem('userType')
     if (isLoggedIn === "false" || !isLoggedIn ) {
@@ -54,7 +79,6 @@ function DashboardRestaurant() {
   }, []);
 
   useEffect(() => {
-    
     const getUserData = async () =>{
       try{
           const q = query(usersDb, where("id", "==", currentUID));
@@ -70,11 +94,15 @@ function DashboardRestaurant() {
   }
     getUserData();
     getMyRestaurants();
+  
     }, [])
 
-    //  useEffect(()=>{
-    //     console.log(userData)
-    // },[userData])
+     useEffect(()=>{
+      const scrollableElement = document.querySelector('.pointer-none');
+        if(receivedOrders===true){
+          disablePageScroll(scrollableElement);
+        }else{enablePageScroll(scrollableElement);}
+    },[receivedOrders])
     
   const signOut = () =>{
     localStorage.setItem('LoggedIn',false)
@@ -88,7 +116,7 @@ function DashboardRestaurant() {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0]; 
       const imageRef = ref(storage, newRestaurantName);
-      if(newRestaurantName && file){
+      if(newRestaurantName && file && newRestaurantAddress){
         try {
         setLoading(true);
         var newId = "id" + Math.random().toString(16).slice(2)
@@ -96,6 +124,7 @@ function DashboardRestaurant() {
         const imageUrl = await getDownloadURL(imageRef);
         await setDoc(doc(db, "Restaurants", newId), {
             name: newRestaurantName,
+            restaurantAddress:newRestaurantAddress,
             image: imageUrl, 
             owner: currentUID
         });
@@ -114,6 +143,12 @@ function DashboardRestaurant() {
       }
       
   }
+  const showReceivedOrders = ()=>{
+    setReceivedOrders(true);
+    getMyRestaurants();
+  }
+
+ 
 
   return (
     <div className='dashboard-restaurant-div dashboard'>
@@ -123,6 +158,9 @@ function DashboardRestaurant() {
               <form className='add-restaurant-form'>  
                 <label htmlFor="">Name </label>
                 <input type="text" value={newRestaurantName}  onChange={(e)=>{setNewRestaurantName(e.target.value)}}/>
+                
+                <label htmlFor="">Restaurant address </label>
+                <textarea  value={newRestaurantAddress}  onChange={(e)=>{setNewRestaurantAddress(e.target.value)}}/>
 
                 <label htmlFor="">Image </label>
                 <input type="file" id='fileInput' onChange={(e)=>{console.log(e.target.elements)}}/>
@@ -132,13 +170,14 @@ function DashboardRestaurant() {
               </form>  
             }
            </div>:
-            <div className='restaurants-list'>
+            <div className={`${receivedOrders ? 'pointer-none':''} restaurants-list`}>
               <div>
                 <h2>My restaurants</h2>
                 <p>{userData?.email}</p>
                 <p>{userData?.phone}</p>
               </div>
               <button onClick={()=>{setAddRestaurant(true)}}>Add new restaurant</button>
+              <button onClick={showReceivedOrders}>Received Orders</button>
               <button onClick={signOut}>Sign Out</button>
               {loading ? <Loader/> : restaurantData.map((restaurant) => (
                   <RestaurantCard 
@@ -150,6 +189,26 @@ function DashboardRestaurant() {
               ))}
             </div>
         }
+
+        <div className={`received-orders-modal ${receivedOrders?'open':'close'}`}>
+          <button onClick={()=>{setReceivedOrders(false)}} className='close-btn'><IoMdClose /></button>
+          <div className='my-orders-div'>
+            {myReceivedOrdersData?.map((data)=>{
+              return(
+                <div key={data.id} className='flex-order'>
+                  <img className='my-orders-img' src={data.restaurantImg} alt="" />
+                  <div className='my-order-details'>
+                    <p>{data.orderDate}</p>
+                    <p>{data.orderTime}</p>
+                    <p>{data.fromRestaurant}</p>
+                    <p>{data.total},00 lei</p>
+                    <p style={{textTransform:'capitalize'}}>{data.status}</p>
+                    </div>
+                </div>
+              )})}
+              </div> 
+        </div>
+
 
       <ChangesSaved changesSaved={changesSaved}/>
 

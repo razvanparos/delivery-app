@@ -19,3 +19,18 @@
     row-gap: 12px;
     color: white;
 }
+.received-orders-modal{
+    color: white;
+    padding: 80px 4px;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    transition: 0.3s;
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 101%;
+    max-width: 426px;
+    z-index: 3;
+    background-color: rgb(88, 88, 88);
+}

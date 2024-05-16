@@ -7,7 +7,7 @@ function RestaurantCard(props){
     const cardClick = ()=>{
         const formattedName = props.name.toLowerCase().replace(/\s+/g, '-');
         console.log(props.id)
-        navigate(`/dashboard-restaurant/${formattedName}/${props.id}`)
+        navigate(`/dashboard-restaurant/${props.name}/${props.id}`)
         
     }
 
@@ -18,7 +18,7 @@ function RestaurantCard(props){
                <p className='card-name'>{props.name}</p> 
                <div className='flex'>
                     <MdOutlineDeliveryDining className='scooter'/>
-                    <p className='delivery-price'>2,99 lei</p>
+                    <p className='delivery-price'>3,00 lei</p>
                </div>
             </div>
         </div>

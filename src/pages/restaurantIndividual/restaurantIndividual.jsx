@@ -27,7 +27,6 @@ function RestaurantIndividual(){
     const [editMode, setEditMode] = useState(false)
     const [productQty, setProductQty] = useState(1)
     const [productData, setProductData] = useState()
-    const [productsData, setProductsData] = useState()
     const [newProductName, setNewProductName] = useState('')
     const [editProductName, setEditProductName] = useState('')
     const [newProductPrice, setNewProductPrice] = useState('')
@@ -41,6 +40,7 @@ function RestaurantIndividual(){
                 setLoading(true)
                 const docRef = doc(db, 'Restaurants',restaurantId)
                 const querySnapshot = await getDoc(docRef);
+                console.log(querySnapshot.data())
                 setIndividualData(querySnapshot.data())
                 setLoading(false)
                 } catch(err){
@@ -50,12 +50,13 @@ function RestaurantIndividual(){
     }
     useEffect(()=>{
         getIndividualData();
+        console.log(individualData)
     },[])
 
     const back = () =>{
        navigate('/dashboard-restaurant')
     }
-    const viewProduct = (props) =>{
+    const  viewProduct = (props) =>{
         setViewProductModal(true);
         setProductData(props);
         setEditProductName(props.name)
@@ -78,7 +79,8 @@ function RestaurantIndividual(){
                     id: newId,
                     name: newProductName,
                     price: Number(newProductPrice),
-                    image: imageUrl
+                    image: imageUrl,
+                    restaurantId: restaurantId
                 })
             });
             setLoading(false);
@@ -122,7 +124,8 @@ function RestaurantIndividual(){
                             id: productData.id,
                             name: editProductName,
                             price: Number(Math.floor(editProductPrice)), 
-                            image: productData.image 
+                            image: productData.image,
+                            restaurantId: restaurantId
                         };
                         await updateDoc(restaurantRef, { products });
                     } 
@@ -153,7 +156,9 @@ function RestaurantIndividual(){
                             productName: item.name,
                             productPrice: Number(item.price),
                             image: item.image,
-                            restaurant: restaurantName
+                            restaurant: individualData.name,
+                            restaurantImg: individualData.image,
+                            restaurantId: item.restaurantId
                         })
                     });
                     setShowDialog(true); 
@@ -172,7 +177,7 @@ function RestaurantIndividual(){
             let cartQty=querySnapshot.data().cart.length;
             if(cartQty===0){
                productLoop();
-            }else if(querySnapshot.data().cart[0].restaurant===restaurantName){
+            }else if(querySnapshot.data().cart[0].restaurantId===restaurantId){
                 productLoop();
             }else {
                 setCartError(true)
@@ -213,6 +218,7 @@ function RestaurantIndividual(){
                                     name={product.name}
                                     price={product.price}
                                     image={product.image}
+                                    restaurantId={product.restaurantId}
                                     viewProduct={viewProduct}
                                 />
                     })}

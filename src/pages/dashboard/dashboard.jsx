@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './dashboard.css'
 import { useNavigate } from 'react-router-dom';
-import {getDocs,getDoc, collection, query, where, doc, setDoc,updateDoc,arrayUnion} from 'firebase/firestore';
+import {getDocs,getDoc, collection, query, where, doc, setDoc,updateDoc,orderBy} from 'firebase/firestore';
 import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
@@ -34,12 +34,15 @@ function Dashboard(){
     const [addressError, setAddressError]=useState(false);
     const [orderDialog, setOrderDialog]=useState(false);
     const [editPhoneMode, setEditPhoneMode]=useState(false);
+    const [myOrdersModal, setMyOrdersModal]=useState(false);
     const [payment, setPayment]=useState('Cash');
     const [profilePhone, setProfilePhone]=useState('');
+    const [myOrdersData, setMyOrdersData]=useState('');
 
 
 
     const usersDb = collection(db,'UsersDetails')
+    const ordersDb = collection(db,'Orders')
     const restaurantsDb = collection(db,'Restaurants')
 
 
@@ -69,11 +72,25 @@ function Dashboard(){
                    console.log(err)
              }    
         }
+    const myOrders = async () =>{
+        try{
+            const q = query(ordersDb, where("orderedBy", "==", localStorage.getItem('currentUserId')),orderBy('orderDate','desc'),orderBy('orderTime','desc'));
+            const querySnapshot = await getDocs(q);
+            const filteredData = querySnapshot.docs.map((doc)=>({
+                ...doc.data(),
+                id: doc.id,
+            }))
+            setMyOrdersData(filteredData)
+            console.log(filteredData)
+            } catch(err){
+                   console.log(err)
+             }    
+        }
     
       useEffect(() => {
-        
+
         getUserData();
-        
+        myOrders();
         const getRestaurantData = async () =>{
             try{
                 setLoading(true);
@@ -91,6 +108,9 @@ function Dashboard(){
                }
         }
         getRestaurantData();
+        let orderDate = new Date();
+        let orderDateFormat = `${orderDate.getDate()}.${orderDate.getMonth()+1}.${orderDate.getFullYear()}`
+        console.log(orderDateFormat)
         },[])
 
         useEffect(() => {
@@ -99,9 +119,9 @@ function Dashboard(){
             setRestaurantData(filteredData);       
         }, [searchInput]);
 
-    useEffect(()=>{
-        console.log(restaurantData)
-    },[searchInput])
+    // useEffect(()=>{
+    //     console.log(restaurantData)
+    // },[searchInput])
 
   
     window.addEventListener('scroll',function(){
@@ -138,7 +158,8 @@ function Dashboard(){
         localStorage.setItem('currentUserId',0)
         navigate('/');
     }
-    const back = () =>{
+    const back = () =>{ 
+        setHideNav(false);
         setClientTab('home')
      }
     const getUserCart = async () =>{
@@ -201,18 +222,39 @@ function Dashboard(){
     const confirmOrder=async()=>{
        if(address){
             setAddressError(false);
-            var newId = "id" + Math.random().toString(16).slice(2)
+            const q = query(restaurantsDb, where("id", "==", userCart[0].restaurantId));
+            const querySnapshot = await getDocs(q);
+            const filteredData = querySnapshot.docs.map((doc)=>({
+                ...doc.data(),
+                id: doc.id,
+            }))
+            console.log(filteredData)
+            var newId = "id" + Math.random().toString(16).slice(2);
+            let orderDate = new Date();
+            let orderDateFormat = `${orderDate.getDate()}.${orderDate.getMonth()+1}.${orderDate.getFullYear()}`
+            let orderTime = new Date();
+            let orderTimeFormat;
+            if(orderTime.getMinutes()<10){
+                orderTimeFormat = orderTime.getHours().toLocaleString()+':0'+orderTime.getMinutes()
+            }else{
+                orderTimeFormat = orderTime.getHours().toLocaleString()+':'+orderTime.getMinutes()
+            }
                 try {
                 await setDoc(doc(db, "Orders", newId), {
                     id: newId,
                     phone: userData.phone,
-                    pickUpAddress: address,
+                    deliveryAddress: address,
+                    pickupAddress:filteredData[0].restaurantAddress,
                     fromRestaurant: userCart[0].restaurant,
+                    restaurantImg: userCart[0].restaurantImg,
                     products: userCart,
                     paymentMethod: payment,
                     total: delivery+tip+cartTotal,
                     orderedBy: localStorage.getItem('currentUserId'),
-                    status:'ordered'
+                    orderedTo: userCart[0].restaurantId,
+                    status:'ordered',
+                    orderDate: orderDateFormat,
+                    orderTime: orderTimeFormat
                   });
                 setOrderModal(false); 
                 setOrderDialog(true); 
@@ -333,15 +375,36 @@ function Dashboard(){
 
             {clientTab==='profile' ?
                 <div className='profile-div'>
-                     <div className={`individual-back ${orderModal?'pointer-none':''}`} onClick={back}>
+                     <div className={`individual-back ${myOrdersModal?'pointer-none':''}`} onClick={back}>
                         <FaArrowLeftLong />
                     </div>
-                    <h2>{userData.email}</h2>
+                    <h2>{userData?.email}</h2>
                     <div>
                         <input className={`${editPhoneMode?'editable':'noedit'} profile-phone`} type="number" value={profilePhone} onChange={(e)=>{setProfilePhone(e.target.value)}} />
                         {editPhoneMode?<FaCheck style={{fontSize:'20px', marginLeft:'12px'}} onClick={editPhone}/>:<FaRegEdit onClick={editPhone} style={{fontSize:'20px', marginLeft:'12px'}}/>}
                     </div>
+                    <button className='sign-out' onClick={()=>{setMyOrdersModal(true)}}>My Orders</button>
                     <button className='sign-out' onClick={signOut}>Log out</button>
+                    <div className={`my-orders-modal ${myOrdersModal ? 'open':'close'}`}>
+                        <button onClick={()=>{setMyOrdersModal(false)}} className='close-btn'><IoMdClose /></button>
+                        <div className='my-orders-div'>
+                            {myOrdersData?.map((data)=>{
+                                return(
+                                    <div key={data.id} className='flex-order'>
+                                        <img className='my-orders-img' src={data.restaurantImg} alt="" />
+                                        <div className='my-order-details'>
+                                            <p>{data.orderDate}</p>
+                                            <p>{data.orderTime}</p>
+                                            <p>{data.fromRestaurant}</p>
+                                            <p>{data.total},00 lei</p>
+                                            <p style={{textTransform:'capitalize'}}>{data.status}</p>
+                                        </div>
+                                        
+                                    </div>
+                                    )   
+                            })}
+                        </div> 
+                    </div>
                 </div>
             :''}
             
