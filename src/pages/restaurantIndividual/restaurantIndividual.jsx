@@ -50,7 +50,6 @@ function RestaurantIndividual(){
     }
     useEffect(()=>{
         getIndividualData();
-        console.log(individualData)
     },[])
 
     const back = () =>{

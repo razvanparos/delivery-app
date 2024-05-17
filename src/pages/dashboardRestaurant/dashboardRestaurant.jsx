@@ -10,7 +10,7 @@ import {storage} from '../../firebase-config'
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ChangesSaved from '../../components/ChangesSaved/ChangesSaved';
 import { IoMdClose } from "react-icons/io";
-import { disablePageScroll, enablePageScroll, scrollLock  } from 'scroll-lock';
+import { disablePageScroll, enablePageScroll  } from 'scroll-lock';
 
 
 
@@ -112,7 +112,6 @@ function DashboardRestaurant() {
 }
 
   const addNewRestaurant = async (e)=>{
-      e.preventDefault()
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0]; 
       const imageRef = ref(storage, newRestaurantName);
@@ -123,6 +122,7 @@ function DashboardRestaurant() {
         await uploadBytes(imageRef, file);
         const imageUrl = await getDownloadURL(imageRef);
         await setDoc(doc(db, "Restaurants", newId), {
+            id: newId,
             name: newRestaurantName,
             restaurantAddress:newRestaurantAddress,
             image: imageUrl, 
