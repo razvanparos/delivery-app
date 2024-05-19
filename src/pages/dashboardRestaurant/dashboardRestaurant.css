@@ -4,6 +4,7 @@
     width: 100%;
     row-gap: 24px;
     color: white;
+    padding-bottom: 40px;
 }
 .restaurants-list > button{
     background-color: var(--green);
@@ -44,7 +45,6 @@
     overflow-y: scroll;
 }
 .individual-order-img{
-    opacity: 0.77;
     border-radius: 10px;
     object-fit: cover;
     height: 150px;
@@ -59,4 +59,18 @@
     font-size: 20px;
     padding: 4px 8px;
     cursor: pointer;
+    width: 100%;
+}
+
+@media (max-height:670px) {
+    .received-orders-modal{
+        padding-top: 70px;
+        padding-bottom: 10px;
+    }
+    .individual-order-img{
+        height: 100px;
+    }
+    .individual-order-div p {
+        font-size: 12px;
+    }
 }

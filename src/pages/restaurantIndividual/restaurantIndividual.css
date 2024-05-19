@@ -104,6 +104,7 @@
 .pointer-none{
     opacity: 0.4;
     pointer-events: none;
+    overflow-y: hidden;
 }
 .add-product-form{
     width: 60%;

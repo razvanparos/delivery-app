@@ -10,7 +10,6 @@ import {storage} from '../../firebase-config'
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ChangesSaved from '../../components/ChangesSaved/ChangesSaved';
 import { IoMdClose } from "react-icons/io";
-import { disablePageScroll, enablePageScroll  } from 'scroll-lock';
 import { FaArrowLeftLong } from "react-icons/fa6";
 import collect from 'collect.js';
 
@@ -101,14 +100,8 @@ function DashboardRestaurant() {
     getUserData();
     getMyRestaurants();
   
-    }, [])
+    },[])
 
-     useEffect(()=>{
-      const scrollableElement = document.querySelector('.restaurants-list');
-        if(receivedOrders===true){
-          disablePageScroll(scrollableElement);
-        }else{enablePageScroll(scrollableElement);}
-    },[receivedOrders])
     
   const signOut = () =>{
     localStorage.setItem('LoggedIn',false)
