@@ -34,3 +34,29 @@
     z-index: 3;
     background-color: rgb(88, 88, 88);
 }
+.individual-order-div{
+    padding-left: 8px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    height: 100%;
+    max-height: 573px;
+    overflow-y: scroll;
+}
+.individual-order-img{
+    opacity: 0.77;
+    border-radius: 10px;
+    object-fit: cover;
+    height: 150px;
+    width: 100%;
+
+}
+.order-status-btn{
+    background-color: var(--green);
+    color: white;
+    border-radius: 10px;
+    border: 0px;
+    font-size: 20px;
+    padding: 4px 8px;
+    cursor: pointer;
+}

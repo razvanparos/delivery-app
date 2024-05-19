@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './dashboardRestaurant.css';
 import { useEffect, useState } from 'react';
-import {getDocs, collection, query, where, doc, setDoc, orderBy} from 'firebase/firestore';
+import {getDocs, collection, query, where, doc, setDoc, orderBy,updateDoc} from 'firebase/firestore';
 import {db} from '../../firebase-config'
 import Loader from '../../components/Loader/Loader';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
@@ -11,6 +11,8 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import ChangesSaved from '../../components/ChangesSaved/ChangesSaved';
 import { IoMdClose } from "react-icons/io";
 import { disablePageScroll, enablePageScroll  } from 'scroll-lock';
+import { FaArrowLeftLong } from "react-icons/fa6";
+import collect from 'collect.js';
 
 
 
@@ -25,9 +27,13 @@ function DashboardRestaurant() {
   const [loading, setLoading] = useState(false)
   const [changesSaved, setChangesSaved] = useState(false)
   const [receivedOrders, setReceivedOrders] = useState(false)
+  const [showIndividualOrder, setShowIndividualOrder] = useState(false)
+  const [showIndividualOrderData, setShowIndividualOrderData] = useState([])
   const [newRestaurantName, setNewRestaurantName] = useState('')
   const [myReceivedOrdersData, setMyReceivedOrdersData] = useState([])
+  const [individualOrderItems, setIndividualOrderItems] = useState({})
   const [newRestaurantAddress, setNewRestaurantAddress] = useState('')
+  let status=['Ordered','Preparing','Delivering','Delivered'];
 
   const restaurantsDb = collection(db,'Restaurants')
   const usersDb = collection(db,'UsersDetails')
@@ -35,7 +41,7 @@ function DashboardRestaurant() {
   
   const myReceivedOrders = async (myRestaurants) =>{
     try{
-        const q = query(ordersDb, where("orderedTo", "in", myRestaurants),orderBy('orderDate','desc'),orderBy('orderTime','desc'));
+        const q = query(ordersDb, where("orderedTo", "in", myRestaurants),orderBy('status','asc'),orderBy('orderDate','desc'),orderBy('orderTime','desc'));
         const querySnapshot = await getDocs(q);
         const filteredData = querySnapshot.docs.map((doc)=>({
             ...doc.data(),
@@ -43,7 +49,7 @@ function DashboardRestaurant() {
         }))
         setMyReceivedOrdersData(filteredData)
         } catch(err){
-               console.log(err)
+            console.log(err)
          }    
     }
   const getMyRestaurants = async () =>{
@@ -59,7 +65,7 @@ function DashboardRestaurant() {
         filteredData.forEach((r)=>{myRestaurants.push(r.id)})
         // console.log(myRestaurants)
         setRestaurantData(filteredData)
-        
+        setMyRestaurantsId(myRestaurants)
         myReceivedOrders(myRestaurants)
         
         setLoading(false);
@@ -98,7 +104,7 @@ function DashboardRestaurant() {
     }, [])
 
      useEffect(()=>{
-      const scrollableElement = document.querySelector('.pointer-none');
+      const scrollableElement = document.querySelector('.restaurants-list');
         if(receivedOrders===true){
           disablePageScroll(scrollableElement);
         }else{enablePageScroll(scrollableElement);}
@@ -147,6 +153,46 @@ function DashboardRestaurant() {
     setReceivedOrders(true);
     getMyRestaurants();
   }
+  const showIndividualOrderFunc = (data)=>{
+    setShowIndividualOrder(true);
+    setShowIndividualOrderData(data)
+    // console.log(data.products)
+    let productNames=[];
+    data.products.forEach((e)=>{
+      productNames.push(e.productName)
+    })
+    const collection = collect(productNames);
+    const counted = collection.countBy();
+    counted.all();
+    setIndividualOrderItems(counted.items)
+  
+
+  }
+
+  const updateIndividualOrder = async(id)=>{
+    try{
+      const q = query(ordersDb, where("id", "==", id));
+      const querySnapshot = await getDocs(q);
+      const filteredData = querySnapshot.docs.map((doc)=>({
+          ...doc.data(),
+          id: doc.id,
+      }))
+      setShowIndividualOrderData(filteredData[0])
+      myReceivedOrders(myRestaurantsId)
+      } catch(err){
+          console.log(err)
+       }    
+  }
+  const updateStatus = async(id)=>{
+    try {
+      const ordersRef = doc(db, 'Orders', id);
+      await updateDoc(ordersRef, { status: 1 });  
+      updateIndividualOrder(id)
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
 
  
 
@@ -192,21 +238,46 @@ function DashboardRestaurant() {
 
         <div className={`received-orders-modal ${receivedOrders?'open':'close'}`}>
           <button onClick={()=>{setReceivedOrders(false)}} className='close-btn'><IoMdClose /></button>
-          <div className='my-orders-div'>
-            {myReceivedOrdersData?.map((data)=>{
-              return(
-                <div key={data.id} className='flex-order'>
-                  <img className='my-orders-img' src={data.restaurantImg} alt="" />
-                  <div className='my-order-details'>
-                    <p>{data.orderDate}</p>
-                    <p>{data.orderTime}</p>
-                    <p>{data.fromRestaurant}</p>
-                    <p>{data.total},00 lei</p>
-                    <p style={{textTransform:'capitalize'}}>{data.status}</p>
-                    </div>
-                </div>
-              )})}
+          {showIndividualOrder?
+          <div className='individual-back' onClick={()=>{setShowIndividualOrder(false)}}>
+              <FaArrowLeftLong />
+          </div>
+          :''}
+          {showIndividualOrder?
+            <div className='individual-order-div'>
+              <img src={showIndividualOrderData.restaurantImg} alt="" className='individual-order-img'/>
+              <p>{showIndividualOrderData.fromRestaurant}</p>
+              <p>{`Order #${showIndividualOrderData.id}`}</p>
+              <p>Ordered on: {showIndividualOrderData.orderDate}, {showIndividualOrderData.orderTime}</p>
+              <div>
+                  {Object.entries(individualOrderItems).map(([key, value]) => <p key={key}>{`${value} x ${key}`}</p>)}
+              </div>
+              <p>Total: {showIndividualOrderData.total},00 lei</p>
+              <p>Payment method: {showIndividualOrderData.paymentMethod}</p>
+              <p>Delivery address: {showIndividualOrderData.deliveryAddress}</p>
+              <p>Client phone: {showIndividualOrderData.phone}</p>
+              <p style={{fontSize:'24px'}}>Status: {status[showIndividualOrderData.status]}</p>
+              {showIndividualOrderData.status===0?<button onClick={()=>{updateStatus(showIndividualOrderData.id)}} className='order-status-btn'>{`Change order status to "${status[showIndividualOrderData.status+1]}"`}</button>:''}
+
+            
+            
+            </div>:
+              <div className='my-orders-div'>
+              {myReceivedOrdersData?.map((data)=>{
+                return(
+                  <div key={data.id} className='flex-order' onClick={()=>{showIndividualOrderFunc(data)}}>
+                    <img className='my-orders-img' src={data.restaurantImg} alt="" />
+                    <div className='my-order-details'>
+                      <p>{data.orderDate}</p>
+                      <p>{data.orderTime}</p>
+                      <p>{data.fromRestaurant}</p>
+                      <p>{data.total},00 lei</p>
+                      <p>{status[data.status]}</p>
+                      </div>
+                  </div>
+                )})}
               </div> 
+            }      
         </div>
 
 

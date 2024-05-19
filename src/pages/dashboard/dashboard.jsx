@@ -38,6 +38,7 @@ function Dashboard(){
     const [payment, setPayment]=useState('Cash');
     const [profilePhone, setProfilePhone]=useState('');
     const [myOrdersData, setMyOrdersData]=useState('');
+    let status=['Ordered','Preparing','Delivering','Delivered'];
 
 
 
@@ -74,7 +75,7 @@ function Dashboard(){
         }
     const myOrders = async () =>{
         try{
-            const q = query(ordersDb, where("orderedBy", "==", localStorage.getItem('currentUserId')),orderBy('orderDate','desc'),orderBy('orderTime','desc'));
+            const q = query(ordersDb, where("orderedBy", "==", localStorage.getItem('currentUserId')), orderBy('orderDate','desc'),orderBy('orderTime','desc'));
             const querySnapshot = await getDocs(q);
             const filteredData = querySnapshot.docs.map((doc)=>({
                 ...doc.data(),
@@ -252,7 +253,7 @@ function Dashboard(){
                     total: delivery+tip+cartTotal,
                     orderedBy: localStorage.getItem('currentUserId'),
                     orderedTo: userCart[0].restaurantId,
-                    status:'ordered',
+                    status: 0,
                     orderDate: orderDateFormat,
                     orderTime: orderTimeFormat
                   });
@@ -397,7 +398,7 @@ function Dashboard(){
                                             <p>{data.orderTime}</p>
                                             <p>{data.fromRestaurant}</p>
                                             <p>{data.total},00 lei</p>
-                                            <p style={{textTransform:'capitalize'}}>{data.status}</p>
+                                            <p style={{textTransform:'capitalize'}}>{status[data.status]}</p>
                                         </div>
                                         
                                     </div>

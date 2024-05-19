@@ -261,6 +261,7 @@
     display: flex;
     justify-content: space-between;
     text-align: end;
+    cursor: pointer;
 }
 @media(max-width:350px){
     .cart-item-div{
