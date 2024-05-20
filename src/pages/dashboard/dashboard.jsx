@@ -13,6 +13,8 @@ import { IoMdClose } from "react-icons/io";
 import { FaRegEdit } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
 import {Fade, Slide} from 'react-awesome-reveal';
+import Reveal from "react-awesome-reveal";
+import { keyframes } from "@emotion/react";
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -161,6 +163,7 @@ function Dashboard(){
         navigate('/');
     }
     const back = () =>{ 
+        setEditPhoneMode(false)
         setHideNav(false);
         setClientTab('home')
      }
@@ -272,7 +275,9 @@ function Dashboard(){
             setAddressError(true)
        }
     }
-    const deleteCartProduct= async(item)=>{
+    const deleteCartProduct= async(item,index)=>{
+        let deleteItems = document.querySelectorAll('.cart-item-div')
+        deleteItems[index].classList.add('remove-animation')
         try {
             const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
             const userDoc = await getDoc(userRef);
@@ -289,6 +294,18 @@ function Dashboard(){
     }
         
     }
+
+    const customAnimation = keyframes`
+        from {
+            opacity: 0;
+            transform: translate3d(100px, -100px, 0);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+`;
     
         
 
@@ -299,8 +316,8 @@ function Dashboard(){
                 <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}} />
                     <FaSearch className='search-bar-magnification'/>
                     <div className='restaurants-list'>
-                        {loading ? <Loader/> : restaurantData.map((restaurant) => (
-                            <Slide duration={200} triggerOnce='true' key={restaurant.id}>
+                        {loading ? <Loader/> : restaurantData.map((restaurant,index) => (
+                            <Slide duration={100} triggerOnce='true' key={restaurant.id}>
                               <RestaurantCard 
                                 id={restaurant.id}
                                 name={restaurant.name}
@@ -319,21 +336,24 @@ function Dashboard(){
                     <FaArrowLeftLong />
                 </div>
                     <div className={`cart-item-list ${orderModal?'pointer-none':''}`} >
-                        {loading ? <Loader/> : userCart.map((item) => (
-                            <div key={item.id} className='cart-item-div'>
-                                <img src={item.image} alt="" className='cart-item-img'/>
-                                <div >
-                                    <p className='cart-item-name'>{item.productName}</p>
-                                    <p className='cart-item-price'>{`${item.productPrice},00 lei`}</p>
-                                    
-                                </div>
-                                <button onClick={()=>{deleteCartProduct(item)}} className='trash'><IoTrashOutline className='trash'/></button>
+                        {loading ? <Loader/> : userCart.map((item, index) => (
+                            <Slide key={item.id} triggerOnce="true" duration={index*100}>
+                                <div className='cart-item-div'>
+                                    <img src={item.image} alt="" className='cart-item-img'/>
+                                    <div >
+                                        <p className='cart-item-name'>{item.productName}</p>
+                                        <p className='cart-item-price'>{`${item.productPrice},00 lei`}</p>
+                                        
+                                    </div>
+                                    <button onClick={()=>{deleteCartProduct(item,index)}} className='trash'><IoTrashOutline className='trash'/></button>
 
-                            </div>
+                                </div>
+                            </Slide>
+                            
                         ))}
                     </div>
                     {cartQty>0 ?  <div className='cart-div-bottom'>
-                        <p>{`TOTAL: ${cartTotal},00 lei`}</p>
+                        <p style={{fontSize:'24px'}}>{`Total: ${cartTotal},00 lei`}</p>
                         <button className='place-order-btn' onClick={()=>{setOrderModal(true)}}>Continue</button>
                      </div>
                     :<div className='empty'>
@@ -390,23 +410,28 @@ function Dashboard(){
                     <button className='sign-out' onClick={signOut}>Log out</button>
                     <div className={`my-orders-modal ${myOrdersModal ? 'open':'close'}`}>
                         <button onClick={()=>{setMyOrdersModal(false)}} className='close-btn'><IoMdClose /></button>
-                        <div className='my-orders-div'>
-                            {myOrdersData?.map((data)=>{
-                                return(
-                                    <div key={data.id} className='flex-order'>
-                                        <img className='my-orders-img' src={data.restaurantImg} alt="" />
-                                        <div className='my-order-details'>
-                                            <p>{data.orderDate}</p>
-                                            <p>{data.orderTime}</p>
-                                            <p>{data.fromRestaurant}</p>
-                                            <p>{data.total},00 lei</p>
-                                            <p style={{textTransform:'capitalize'}}>{status[data.status]}</p>
+                        {myOrdersData.length>0 ?
+                            <div className='my-orders-div'>
+                                {myOrdersData?.map((data)=>{
+                                    return(
+                                        <div key={data.id} className='flex-order'>
+                                            <img className='my-orders-img' src={data.restaurantImg} alt="" />
+                                            <div className='my-order-details'>
+                                                <p>{data.orderDate}</p>
+                                                <p>{data.orderTime}</p>
+                                                <p>{data.fromRestaurant}</p>
+                                                <p>{data.total},00 lei</p>
+                                                <p style={{textTransform:'capitalize'}}>{status[data.status]}</p>
+                                            </div>
+                                            
                                         </div>
-                                        
-                                    </div>
-                                    )   
-                            })}
-                        </div> 
+                                        )   
+                                })}
+                            </div> 
+                        : <div className='no-orders'>
+                            <p>No orders</p>
+                            <button onClick={()=>{setClientTab('home')}}>Add products</button>
+                        </div>}
                     </div>
                 </div>
             :''}

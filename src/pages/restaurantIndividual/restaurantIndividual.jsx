@@ -174,6 +174,7 @@ function RestaurantIndividual(){
         try{
             const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
             const querySnapshot = await getDoc(userRef);
+            console.log(querySnapshot.data().cart.length)
             let cartQty=querySnapshot.data().cart.length;
             if(cartQty===0){
                productLoop();

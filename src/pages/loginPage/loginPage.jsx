@@ -8,7 +8,7 @@ import {signInWithEmailAndPassword} from 'firebase/auth';
 import Loader from '../../components/Loader/Loader';
 import {getDocs, collection, query, where, doc, setDoc} from 'firebase/firestore';
 import {db} from '../../firebase-config'
-
+import { Slide } from 'react-awesome-reveal';
 
 function LoginPage() {
   const [inputEmail, setInputEmail] = useState('')
@@ -61,7 +61,8 @@ function LoginPage() {
 
 
   return (
-    <div className="login-page-div">
+    <Slide direction='down' duration={300}>
+      <div className="login-page-div">
       {loading ? <Loader/> :
         <form className='login-form'>
             <h2>Sign In</h2>
@@ -78,6 +79,8 @@ function LoginPage() {
         </form>
         }
     </div>
+    </Slide>
+    
   );
 }
 

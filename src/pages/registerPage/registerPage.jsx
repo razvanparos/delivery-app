@@ -7,6 +7,7 @@ import {db} from '../../firebase-config';
 import { doc, setDoc } from "firebase/firestore"; 
 import Loader from '../../components/Loader/Loader';
 import GoBack from '../../components/GoBack/goBack';
+import { Slide } from 'react-awesome-reveal';
 
 function RegisterPage(){
     const [inputPhone, setInputPhone] = useState('')
@@ -27,7 +28,8 @@ function RegisterPage(){
               id: auth.currentUser.uid,
               email: inputEmail,
               phone: inputPhone,
-              userType: userType
+              userType: userType,
+              cart: []
             });
             setLoading(false);
             navigate('/')
@@ -40,6 +42,7 @@ function RegisterPage(){
         
     }
     return(
+      <Slide duration={200}>
         <div className="login-page-div">
           {loading ? <Loader/> : 
             <form action="" className='login-form'>
@@ -70,6 +73,8 @@ function RegisterPage(){
             </form>
             }
         </div>
+      </Slide>
+        
     );
 }
 
