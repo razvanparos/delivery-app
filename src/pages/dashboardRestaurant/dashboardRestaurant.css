@@ -67,8 +67,9 @@
 .pointer-none-scroll{
     opacity: 0.4;
     pointer-events: none;
-    overflow-y: hidden;
+    overflow: hidden;
     height: 0px;
+    visibility: hidden;
 }
 
 @media (max-height:670px) {

@@ -13,6 +13,7 @@ import { IoMdClose } from "react-icons/io";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import collect from 'collect.js';
 import { useTransition, animated } from 'react-spring';
+import {Slide} from 'react-awesome-reveal';
 
 
 
@@ -43,6 +44,16 @@ function DashboardRestaurant() {
       from:{x:800, y:0, opacity:1},
       enter:{x:0, y:0, opacity:1, delay:0 },
       leave:{x:800, y:0, opacity:1}
+  })
+  const transition2 = useTransition(loading,{
+      from:{x:400, y:0, opacity:0},
+      enter:{x:0, y:0, opacity:1},
+      leave:{x:400, y:0, opacity:0}
+  })
+  const transition3 = useTransition(addRestaurant,{
+      from:{x:400, y:0, opacity:0,},
+      enter:{x:0, y:0, opacity:1},
+      leave:{x:400, y:0, opacity:0}
   })
   
   const myReceivedOrders = async (myRestaurants) =>{
@@ -194,13 +205,12 @@ function DashboardRestaurant() {
     
   }
 
- 
-
   return (
     <div className='dashboard-restaurant-div dashboard'>
         {addRestaurant ?
           <div>
             {loading ? <Loader/> :
+            <Slide direction='down' duration={200}>
               <form className='add-restaurant-form'>  
                 <label htmlFor="">Name </label>
                 <input type="text" value={newRestaurantName}  onChange={(e)=>{setNewRestaurantName(e.target.value)}}/>
@@ -214,7 +224,7 @@ function DashboardRestaurant() {
                 <button onClick={addNewRestaurant}>Submit</button>
                 <button onClick={()=>{setAddRestaurant(false)}}>Cancel</button>
               </form>  
-            }
+            </Slide>}
            </div>:
             <div className={`${receivedOrders ? 'pointer-none-scroll':''} restaurants-list`}>
               <div>
@@ -226,12 +236,13 @@ function DashboardRestaurant() {
               <button onClick={showReceivedOrders}>Received orders</button>
               <button onClick={signOut}>Sign Out</button>
               {loading ? <Loader/> : restaurantData.map((restaurant) => (
+                 <Slide duration={200} triggerOnce="true" key={restaurant.id}> 
                   <RestaurantCard 
-                      key={restaurant.id}
                       id={restaurant.id}
                       name={restaurant.name}
                       image={restaurant.image}
                   />
+                 </Slide> 
               ))}
             </div>
         }

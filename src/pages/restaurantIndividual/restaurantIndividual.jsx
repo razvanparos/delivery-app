@@ -13,6 +13,7 @@ import Loader from '../../components/Loader/Loader';
 import { IoMdClose } from "react-icons/io";
 import { FaCheck } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { Slide} from 'react-awesome-reveal';
 
 function RestaurantIndividual(){
     const {restaurantName, restaurantId}  = useParams();
@@ -198,7 +199,7 @@ function RestaurantIndividual(){
     return(
         <div>
             {loading ? <Loader/> : 
-            <div className={`restaurant-individual-div ${productModal ?'pointer-none':''} ${viewProductModal ?'pointer-none':''}`}>
+                <div className={`restaurant-individual-div ${productModal ?'pointer-none':''} ${viewProductModal ?'pointer-none':''}`}>
                 <div className='individual-back' onClick={back}>
                     <FaArrowLeftLong />
                 </div>
@@ -210,9 +211,10 @@ function RestaurantIndividual(){
                     </button>: ''}
 
                 <div className='products-list'>
-                    {individualData?.products?.map((product)=>{
-                        return <ProductCard
-                                    key={product.id}
+                    {individualData?.products?.map((product,index)=>{
+                        return (
+                        <Slide duration={100+(index*100)} triggerOnce="true" key={product.id}>
+                            <ProductCard
                                     id={product.id}
                                     name={product.name}
                                     price={product.price}
@@ -220,6 +222,8 @@ function RestaurantIndividual(){
                                     restaurantId={product.restaurantId}
                                     viewProduct={viewProduct}
                                 />
+                        </Slide>
+                    ) 
                     })}
                     
                 </div>

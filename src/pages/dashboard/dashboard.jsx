@@ -12,6 +12,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { FaRegEdit } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
+import {Fade, Slide} from 'react-awesome-reveal';
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -292,19 +293,20 @@ function Dashboard(){
         
 
     return(
-        <div className="dashboard-div dashboard">
+            <div className="dashboard-div dashboard">
             {clientTab==='home' ?
                 <div className='home-dashboard'>
                 <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}} />
                     <FaSearch className='search-bar-magnification'/>
                     <div className='restaurants-list'>
                         {loading ? <Loader/> : restaurantData.map((restaurant) => (
-                            <RestaurantCard 
-                                key={restaurant.id}
+                            <Slide duration={200} triggerOnce='true' key={restaurant.id}>
+                              <RestaurantCard 
                                 id={restaurant.id}
                                 name={restaurant.name}
                                 image={restaurant.image}
-                            />
+                            />  
+                            </Slide> 
                         ))}
                     </div>
                     {restaurantData.length> 0 || loading ? '': <p style={{textAlign:'center', color:'white', fontSize:'24px', width:'100%'}}>No results</p>} 
@@ -371,7 +373,7 @@ function Dashboard(){
                         </div>
                         <button onClick={confirmOrder} className='confirm-order-btn'>Confirm Order</button>
                     </div>
-                </div>
+                </div>   
             :''}
 
             {clientTab==='profile' ?
