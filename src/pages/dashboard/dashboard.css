@@ -237,7 +237,10 @@
     background-color: rgb(88, 88, 88);
 }
 .my-orders-div{
+    position: fixed;
+    width: 99%;
     padding: 8px;
+    padding-bottom: 100px;
     display: flex;
     flex-direction: column;
     row-gap: 12px;

@@ -34,8 +34,11 @@
     max-width: 426px;
     z-index: 3;
     background-color: rgb(88, 88, 88);
+    overflow: hidden;
 }
 .individual-order-div{
+    position: fixed;
+    width: 100%;
     padding-left: 8px;
     display: flex;
     flex-direction: column;
@@ -60,6 +63,12 @@
     padding: 4px 8px;
     cursor: pointer;
     width: 100%;
+}
+.pointer-none-scroll{
+    opacity: 0.4;
+    pointer-events: none;
+    overflow-y: hidden;
+    height: 0px;
 }
 
 @media (max-height:670px) {

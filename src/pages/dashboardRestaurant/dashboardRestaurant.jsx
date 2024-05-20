@@ -12,6 +12,7 @@ import ChangesSaved from '../../components/ChangesSaved/ChangesSaved';
 import { IoMdClose } from "react-icons/io";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import collect from 'collect.js';
+import { useTransition, animated } from 'react-spring';
 
 
 
@@ -37,6 +38,12 @@ function DashboardRestaurant() {
   const restaurantsDb = collection(db,'Restaurants')
   const usersDb = collection(db,'UsersDetails')
   const ordersDb = collection(db,'Orders')
+
+  const transition = useTransition(showIndividualOrder,{
+      from:{x:800, y:0, opacity:1},
+      enter:{x:0, y:0, opacity:1, delay:0 },
+      leave:{x:800, y:0, opacity:1}
+  })
   
   const myReceivedOrders = async (myRestaurants) =>{
     try{
@@ -209,14 +216,14 @@ function DashboardRestaurant() {
               </form>  
             }
            </div>:
-            <div className={`${receivedOrders ? 'pointer-none':''} restaurants-list`}>
+            <div className={`${receivedOrders ? 'pointer-none-scroll':''} restaurants-list`}>
               <div>
                 <h2>My restaurants</h2>
                 <p>{userData?.email}</p>
                 <p>{userData?.phone}</p>
               </div>
               <button onClick={()=>{setAddRestaurant(true)}}>Add new restaurant</button>
-              <button onClick={showReceivedOrders}>Received Orders</button>
+              <button onClick={showReceivedOrders}>Received orders</button>
               <button onClick={signOut}>Sign Out</button>
               {loading ? <Loader/> : restaurantData.map((restaurant) => (
                   <RestaurantCard 
@@ -236,26 +243,24 @@ function DashboardRestaurant() {
               <FaArrowLeftLong />
           </div>
           :''}
-          {showIndividualOrder?
-            <div className='individual-order-div'>
-              <img src={showIndividualOrderData.restaurantImg} alt="" className='individual-order-img'/>
-              <p>{showIndividualOrderData.fromRestaurant}</p>
-              <p>{`Order #${showIndividualOrderData.id}`}</p>
-              <p>Ordered on: {showIndividualOrderData.orderDate}, {showIndividualOrderData.orderTime}</p>
-              <div>
-                  {Object.entries(individualOrderItems).map(([key, value]) => <p key={key}>{`${value} x ${key}`}</p>)}
-              </div>
-              <p>Total: {showIndividualOrderData.total},00 lei</p>
-              <p>Payment method: {showIndividualOrderData.paymentMethod}</p>
-              <p>Delivery address: {showIndividualOrderData.deliveryAddress}</p>
-              <p>Client phone: {showIndividualOrderData.phone}</p>
-              <p style={{fontSize:'24px'}}>Status: {status[showIndividualOrderData.status]}</p>
-              {showIndividualOrderData.status===0?<button onClick={()=>{updateStatus(showIndividualOrderData.id)}} className='order-status-btn'>{`Change order status to "${status[showIndividualOrderData.status+1]}"`}</button>:''}
-
-            
-            
-            </div>:
-              <div className='my-orders-div'>
+          {transition((style,item)=>
+              item ? 
+              <animated.div style={style} className='individual-order-div'>
+                <img src={showIndividualOrderData.restaurantImg} alt="" className='individual-order-img'/>
+                <p>{showIndividualOrderData.fromRestaurant}</p>
+                <p>{`Order #${showIndividualOrderData.id}`}</p>
+                <p>Ordered on: {showIndividualOrderData.orderDate}, {showIndividualOrderData.orderTime}</p>
+                <div>
+                    {Object.entries(individualOrderItems).map(([key, value]) => <p key={key}>{`${value} x ${key}`}</p>)}
+                </div>
+                <p>Total: {showIndividualOrderData.total},00 lei</p>
+                <p>Payment method: {showIndividualOrderData.paymentMethod}</p>
+                <p>Delivery address: {showIndividualOrderData.deliveryAddress}</p>
+                <p>Client phone: {showIndividualOrderData.phone}</p>
+                <p style={{fontSize:'24px'}}>Status: {status[showIndividualOrderData.status]}</p>
+                {showIndividualOrderData.status===0?<button onClick={()=>{updateStatus(showIndividualOrderData.id)}} className='order-status-btn'>{`Change order status to "${status[showIndividualOrderData.status+1]}"`}</button>:''}
+            </animated.div> :
+            <animated.div style={style} className='my-orders-div'>
               {myReceivedOrdersData?.map((data)=>{
                 return(
                   <div key={data.id} className='flex-order' onClick={()=>{showIndividualOrderFunc(data)}}>
@@ -269,8 +274,8 @@ function DashboardRestaurant() {
                       </div>
                   </div>
                 )})}
-              </div> 
-            }      
+            </animated.div> 
+          )}      
         </div>
 
 
