@@ -42,7 +42,7 @@ function RegisterPage(){
         
     }
     return(
-      <Slide duration={200}>
+      <Slide direction='right' duration={200}>
         <div className="login-page-div">
           {loading ? <Loader/> : 
             <form action="" className='login-form'>

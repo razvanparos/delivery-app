@@ -12,9 +12,10 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { FaRegEdit } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
-import {Fade, Slide} from 'react-awesome-reveal';
-import Reveal from "react-awesome-reveal";
+import {Slide} from 'react-awesome-reveal';
 import { keyframes } from "@emotion/react";
+import collect from 'collect.js';
+import { useTransition, animated } from 'react-spring';
 
 function Dashboard(){
     const navigate = useNavigate();
@@ -38,16 +39,25 @@ function Dashboard(){
     const [orderDialog, setOrderDialog]=useState(false);
     const [editPhoneMode, setEditPhoneMode]=useState(false);
     const [myOrdersModal, setMyOrdersModal]=useState(false);
+    const [individualOrder, setIndividualOrder]=useState(false);
     const [payment, setPayment]=useState('Cash');
     const [profilePhone, setProfilePhone]=useState('');
     const [myOrdersData, setMyOrdersData]=useState('');
     let status=['Ordered','Preparing','Delivering','Delivered'];
+    const [individualOrderData, setIndividualOrderData] = useState([])
+    const [individualOrderItems, setIndividualOrderItems] = useState({})
 
 
 
     const usersDb = collection(db,'UsersDetails')
     const ordersDb = collection(db,'Orders')
     const restaurantsDb = collection(db,'Restaurants')
+
+    const transition = useTransition(individualOrder,{
+        from:{x:800, y:0, opacity:1},
+        enter:{x:0, y:0, opacity:1, delay:0 },
+        leave:{x:800, y:0, opacity:1}
+    })
 
 
    
@@ -305,10 +315,21 @@ function Dashboard(){
             opacity: 1;
             transform: translate3d(0, 0, 0);
         }
-`;
-    
-        
+        `;
 
+    const showIndividualOrderFunc=(data)=>{
+        setIndividualOrder(true)
+        setIndividualOrderData(data);
+        let productNames=[];
+        data.products.forEach((e)=>{
+        productNames.push(e.productName)
+        })
+        const collection = collect(productNames);
+        const counted = collection.countBy();
+        counted.all();
+        setIndividualOrderItems(counted.items)
+    }
+    
     return(
             <div className="dashboard-div dashboard">
             {clientTab==='home' ?
@@ -410,28 +431,44 @@ function Dashboard(){
                     <button className='sign-out' onClick={signOut}>Log out</button>
                     <div className={`my-orders-modal ${myOrdersModal ? 'open':'close'}`}>
                         <button onClick={()=>{setMyOrdersModal(false)}} className='close-btn'><IoMdClose /></button>
-                        {myOrdersData.length>0 ?
-                            <div className='my-orders-div'>
-                                {myOrdersData?.map((data)=>{
-                                    return(
-                                        <div key={data.id} className='flex-order'>
-                                            <img className='my-orders-img' src={data.restaurantImg} alt="" />
-                                            <div className='my-order-details'>
-                                                <p>{data.orderDate}</p>
-                                                <p>{data.orderTime}</p>
-                                                <p>{data.fromRestaurant}</p>
-                                                <p>{data.total},00 lei</p>
-                                                <p style={{textTransform:'capitalize'}}>{status[data.status]}</p>
-                                            </div>
-                                            
+                        
+                        {individualOrder ?
+                        <div className='individual-back' onClick={()=>{setIndividualOrder(false)}}>
+                            <FaArrowLeftLong />
+                        </div>
+                        :''}
+                        {transition((style,item)=> item ?
+                        <animated.div  style={style} className='individual-order-div'>
+                            <img src={individualOrderData.restaurantImg} alt="" className='individual-order-img'/>
+                            <p>{individualOrderData.fromRestaurant}</p>
+                            <p>{`Order #${individualOrderData.id}`}</p>
+                            <p>Ordered on: {individualOrderData.orderDate}, {individualOrderData.orderTime}</p>
+                            <div>
+                                {Object.entries(individualOrderItems).map(([key, value]) => <p key={key}>{`${value} x ${key}`}</p>)}
+                            </div>
+                            <p>Total: {individualOrderData.total},00 lei</p>
+                            <p>Payment method: {individualOrderData.paymentMethod}</p>
+                            <p>Delivery address: {individualOrderData.deliveryAddress}</p>
+                            <p>Client phone: {individualOrderData.phone}</p>
+                            <p style={{fontSize:'24px'}}>Status: {status[individualOrderData.status]}</p>
+                        </animated.div>:
+
+                        <animated.div style={style} className='my-orders-div'>
+                            {myOrdersData?.map((data)=>{
+                                return(
+                                    <div key={data.id} className='flex-order' onClick={()=>{showIndividualOrderFunc(data)}}>
+                                        <img className='my-orders-img' src={data.restaurantImg} alt="" />
+                                        <div className='my-order-details'>
+                                            <p>{data.orderDate}</p>
+                                            <p>{data.orderTime}</p>
+                                            <p>{data.fromRestaurant}</p>
+                                            <p>{data.total},00 lei</p>
+                                            <p style={{textTransform:'capitalize'}}>{status[data.status]}</p>
                                         </div>
-                                        )   
+                                    </div>
+                                    )   
                                 })}
-                            </div> 
-                        : <div className='no-orders'>
-                            <p>No orders</p>
-                            <button onClick={()=>{setClientTab('home')}}>Add products</button>
-                        </div>}
+                            </animated.div> )}
                     </div>
                 </div>
             :''}

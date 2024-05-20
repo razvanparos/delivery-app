@@ -15,6 +15,7 @@
     font-size: 18px;
 }
 .add-restaurant-form{
+    width: 100%;
     display: flex;
     flex-direction: column;
     row-gap: 12px;
@@ -71,6 +72,67 @@
     height: 0px;
     visibility: hidden;
 }
+.restaurant-add-name{
+    border-radius: 10px;
+    border: 0px;
+    padding: 8px;
+    background-color: rgb(158, 158, 158);
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+}
+.product-modal-cancel{
+    background-color: transparent;
+    color: white;
+    border: 0px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 16px;
+}
+#fileInput::file-selector-button{
+   color: var(--green);
+   background-color: transparent;
+   border: 1px solid var(--green);
+   border-radius: 5px;
+   padding: 4px;
+}
+.custum-file-upload {
+    height: fit-content;
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px dashed var(--green);
+    background-color: transparent;
+    border-radius: 10px;
+  }
+  
+.custum-file-upload .icon {
+    filter: brightness(0) saturate(100%) invert(61%) sepia(11%) saturate(2686%) hue-rotate(98deg) brightness(100%) contrast(78%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scale: 0.7;
+  }
+  
+.custum-file-upload .icon svg {
+    height: 80px;
+    fill: rgba(75, 85, 99, 1);
+  }
+  
+.custum-file-upload .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+  
+.custum-file-upload .text span {
+    display: none;
+  }
+  
+
 
 @media (max-height:670px) {
     .received-orders-modal{

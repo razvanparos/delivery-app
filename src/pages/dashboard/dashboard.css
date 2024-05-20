@@ -225,6 +225,7 @@
     font-size: 20px;
 }
 .my-orders-modal{
+    overflow: hidden;
     padding: 80px 4px;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;

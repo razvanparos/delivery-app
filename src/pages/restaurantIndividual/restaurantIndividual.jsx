@@ -1,6 +1,6 @@
 import './restaurantIndividual.css';
 import { useParams } from 'react-router-dom';
-import {getDocs,getDoc, collection, query, where, doc, setDoc, updateDoc, arrayUnion} from 'firebase/firestore';
+import {getDoc, collection, query, where, doc, deleteDoc, updateDoc, arrayUnion} from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {storage} from '../../firebase-config'
 import {db} from '../../firebase-config'
@@ -191,6 +191,10 @@ function RestaurantIndividual(){
                console.log(err)
            }
     }
+    const removeRestaurant = async()=>{
+        await deleteDoc(doc(db, "Restaurants", restaurantId));
+        navigate('/dashboard-restaurant')
+    }
 
 
     // useEffect(()=>{
@@ -201,33 +205,34 @@ function RestaurantIndividual(){
         <div>
             {loading ? <Loader/> : 
                 <div className={`restaurant-individual-div ${productModal ?'pointer-none':''} ${viewProductModal ?'pointer-none':''}`}>
-                <div className='individual-back' onClick={back}>
-                    <FaArrowLeftLong />
-                </div>
-                <img src={individualData?.image} alt="" className='individual-image'/>
-                <h2 className='restaurant-name'>{individualData?.name}</h2>
-                {userType==='restaurant' ?
-                    <button className='add-product-btn' onClick={()=>{setProductModal(true); window.scrollTo({ top: 0, behavior: 'smooth' });}}>
-                        Add product<FaSquarePlus className='add-product-icon'/>
-                    </button>: ''}
+                    <div className='individual-back' onClick={back}>
+                        <FaArrowLeftLong />
+                    </div>
+                    <img src={individualData?.image} alt="" className='individual-image'/>
+                    <h2 className='restaurant-name'>{individualData?.name}</h2>
+                    {userType==='restaurant' ?
+                        <button className='add-product-btn' onClick={()=>{setProductModal(true); window.scrollTo({ top: 0, behavior: 'smooth' });}}>
+                            Add product<FaSquarePlus className='add-product-icon'/>
+                        </button>: ''}
 
-                <div className='products-list'>
-                    {individualData?.products?.map((product,index)=>{
-                        return (
-                        <Slide duration={100+(index*100)} triggerOnce="true" key={product.id}>
-                            <ProductCard
-                                    id={product.id}
-                                    name={product.name}
-                                    price={product.price}
-                                    image={product.image}
-                                    restaurantId={product.restaurantId}
-                                    viewProduct={viewProduct}
-                                />
-                        </Slide>
-                    ) 
-                    })}
-                    
-                </div>
+                    <div className='products-list'>
+                        {individualData?.products?.map((product,index)=>{
+                            return (
+                            <Slide duration={100+(index*100)} triggerOnce="true" key={product.id}>
+                                <ProductCard
+                                        id={product.id}
+                                        name={product.name}
+                                        price={product.price}
+                                        image={product.image}
+                                        restaurantId={product.restaurantId}
+                                        viewProduct={viewProduct}
+                                    />
+                            </Slide>
+                        ) 
+                        })}
+                        
+                    </div>
+                <button className='remove-restaurant' onClick={removeRestaurant}>Remove restaurant</button>
             </div>
             }
             
@@ -249,15 +254,18 @@ function RestaurantIndividual(){
             {loading?'':
                 <div className={`product-view-modal ${viewProductModal ? 'open':'close'}`}>
                     <button onClick={()=>{setViewProductModal(false); setProductQty(1)}} className='close-btn'><IoMdClose /></button>
-                    <img src={productData?.image} alt="" className='product-modal-image'/>
-                    <div className='product-details'>
-                        <input type="text" id='name-input' className={`product-name ${editMode?'editable':'noedit'}`} value={editProductName} onChange={(e)=>{setEditProductName(e.target.value)}} />
-                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fuga deserunt, dolore minima, deleniti accusamus exercitationem voluptas ipsum necessitatibus asperiores numquam et cumque! Pariatur quasi nemo quas et corrupti! Atque, incidunt!</p>
-                        <div className='price-div'>
-                            <input type="number" style={{ width: `${(editProductPrice.toString().length + 5) * 10}px`, marginRight:`${(editProductPrice.toString().length-35)}px`}} className={`product-price ${editMode?'editable':'noedit'}`} value={editProductPrice} onChange={(e)=>{const newValue=Math.min(parseInt(e.target.value),9999); setEditProductPrice(newValue)}} max={9999}/>
-                            <p>,00 lei</p>
-                        </div>
+                    <div>
+                       <img src={productData?.image} alt="" className='product-modal-image'/>
+                        <div className='product-details'>
+                            <input type="text" id='name-input' className={`product-name ${editMode?'editable':'noedit'}`} value={editProductName} onChange={(e)=>{setEditProductName(e.target.value)}} />
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fuga deserunt, dolore minima, deleniti accusamus exercitationem voluptas ipsum necessitatibus asperiores numquam et cumque! Pariatur quasi nemo quas et corrupti! Atque, incidunt!</p>
+                            <div className='price-div'>
+                                <input type="number" style={{ width: `${(editProductPrice.toString().length + 5) * 10}px`, marginRight:`${(editProductPrice.toString().length-35)}px`}} className={`product-price ${editMode?'editable':'noedit'}`} value={editProductPrice} onChange={(e)=>{const newValue=Math.min(parseInt(e.target.value),9999); setEditProductPrice(newValue)}} max={9999}/>
+                                <p>,00 lei</p>
+                            </div>
+                    </div> 
                     </div>
+                    
                     {userType === 'restaurant'?
                     <div className='buttons-div'>
                         <button className='delete-btn' onClick={deleteProduct}>Delete product</button>

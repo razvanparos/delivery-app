@@ -19,6 +19,7 @@
     align-items: center;
     flex-direction: column;
     row-gap: 12px;
+    padding-bottom: 60px;
 }
 .add-product-btn{
     cursor: pointer;
@@ -355,11 +356,26 @@ input::-webkit-inner-spin-button {
     font-weight: 900;
     font-size: 24px;
 }
+.remove-restaurant{
+    background-color: red;
+    color: white;
+    border: 0px;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
 @media (max-width:375px) {
     .product-modal{
         left: 0px;
     }
     .product-view-modal{
         left: 0px;
+    }
+    
+}
+@media (max-height:600px) {
+    .product-modal-image{
+        max-height: 180px;
     }
 }

@@ -61,7 +61,7 @@ function LoginPage() {
 
 
   return (
-    <Slide direction='down' duration={300}>
+    <Slide direction='down' duration={300} style={{width:'80%'}}>
       <div className="login-page-div">
       {loading ? <Loader/> :
         <form className='login-form'>
@@ -75,7 +75,7 @@ function LoginPage() {
             </div>
             <button className="login-button" onClick={handleSubmit}>Login</button>
             <p className='error'>{result}</p>
-            <p>Not a member? <a href='/register' className='register-button'>Register now!</a></p>
+            <p style={{textAlign:'center'}}>Not a member? <a href='/register' className='register-button'>Register now!</a></p>
         </form>
         }
     </div>
