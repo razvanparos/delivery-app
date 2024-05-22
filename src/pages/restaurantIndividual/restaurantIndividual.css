@@ -322,7 +322,7 @@ input::-webkit-inner-spin-button {
     position: absolute;
     color: white;
     left: 50%;
-    top: -70px;
+    top: -90px;
     transform: translateX(-50%);
     font-size: 16px;
 }
@@ -347,15 +347,24 @@ input::-webkit-inner-spin-button {
     font-size: 18px;
 }
 .dialog-order-closed{
+    z-index: 3;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 12px;
     transition: 0.3s;
     background-color: var(--green);
     width: 90%;
-    padding: 6px 24px;
+    padding: 4px 20px;
     position: absolute;
     color: white;
     left: 50%;
-    top: -70px;
+    top: -95px;
     transform: translateX(-50%);
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: 18px;
 }
 .x{
     font-weight: 900;

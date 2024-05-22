@@ -41,7 +41,6 @@ function RestaurantIndividual(){
                 setLoading(true)
                 const docRef = doc(db, 'Restaurants',restaurantId)
                 const querySnapshot = await getDoc(docRef);
-                console.log(querySnapshot.data())
                 setIndividualData(querySnapshot.data())
                 setLoading(false)
                 } catch(err){
@@ -174,7 +173,6 @@ function RestaurantIndividual(){
         try{
             const userRef = doc(db, 'UsersDetails', localStorage.getItem('currentUserId'));
             const querySnapshot = await getDoc(userRef);
-            console.log(querySnapshot.data().cart.length)
             let cartQty=querySnapshot.data().cart.length;
             if(cartQty===0){
                productLoop();
@@ -195,12 +193,6 @@ function RestaurantIndividual(){
         await deleteDoc(doc(db, "Restaurants", restaurantId));
         navigate('/dashboard-restaurant')
     }
-
-
-    // useEffect(()=>{
-    //     console.log(productsData)
-    // },[productsData])
-    
     return(
         <div>
             {loading ? <Loader/> : 

@@ -1,3 +1,4 @@
+import { Fade } from 'react-awesome-reveal';
 import './ProductCard.css'
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ function ProductCard(props){
                 <p className='product-name'>{props.name}</p>
                 <p>{props.price},00 lei</p>
             </div>
-            <img src={props.image} alt="" className='product-image' />
+            <Fade duration={2000}><img src={props.image} alt="" className='product-image' /></Fade>
         </div>
         
     );

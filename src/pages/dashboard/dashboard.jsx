@@ -12,7 +12,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import { FaRegEdit } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
-import {Slide} from 'react-awesome-reveal';
+import {Slide, Fade} from 'react-awesome-reveal';
 import { keyframes } from "@emotion/react";
 import collect from 'collect.js';
 import { useTransition, animated } from 'react-spring';
@@ -95,7 +95,6 @@ function Dashboard(){
                 id: doc.id,
             }))
             setMyOrdersData(filteredData)
-            console.log(filteredData)
             } catch(err){
                    console.log(err)
              }    
@@ -122,9 +121,6 @@ function Dashboard(){
                }
         }
         getRestaurantData();
-        let orderDate = new Date();
-        let orderDateFormat = `${orderDate.getDate()}.${orderDate.getMonth()+1}.${orderDate.getFullYear()}`
-        console.log(orderDateFormat)
         },[])
 
         useEffect(() => {
@@ -132,10 +128,6 @@ function Dashboard(){
             const filteredData = originalData.filter(item => item.name.toLowerCase().includes(searchInput.toLowerCase()));
             setRestaurantData(filteredData);       
         }, [searchInput]);
-
-    // useEffect(()=>{
-    //     console.log(restaurantData)
-    // },[searchInput])
 
   
     window.addEventListener('scroll',function(){
@@ -243,7 +235,6 @@ function Dashboard(){
                 ...doc.data(),
                 id: doc.id,
             }))
-            console.log(filteredData)
             var newId = "id" + Math.random().toString(16).slice(2);
             let orderDate = new Date();
             let orderDateFormat = `${orderDate.getDate()}.${orderDate.getMonth()+1}.${orderDate.getFullYear()}`
@@ -275,9 +266,9 @@ function Dashboard(){
                   });
                 setOrderModal(false); 
                 setOrderDialog(true); 
+                getUserData();
                 setTimeout(() => {
                     setOrderDialog(false); 
-                    window.location.reload();
                 }, 2000);
                 emptyCart();
         } catch (error) {
@@ -339,7 +330,7 @@ function Dashboard(){
                 <input type="text" className='search-bar' placeholder='Search for restaurants' value={searchInput} onChange={(e)=>{setSearchInput(e.target.value)}} />
                     <FaSearch className='search-bar-magnification'/>
                     <div className='restaurants-list'>
-                        {loading ? <Loader/> : restaurantData.map((restaurant,index) => (
+                        {loading ? <Loader/> : restaurantData.map((restaurant) => (
                             <Slide duration={100} triggerOnce='true' key={restaurant.id}>
                               <RestaurantCard 
                                 id={restaurant.id}
@@ -358,23 +349,24 @@ function Dashboard(){
                  <div className={`individual-back ${orderModal?'pointer-none':''}`} onClick={back}>
                     <FaArrowLeftLong />
                 </div>
-                    <div className={`cart-item-list ${orderModal?'pointer-none':''}`} >
-                        {loading ? <Loader/> : userCart.map((item, index) => (
-                            <Slide key={item.id} triggerOnce="true" duration={index*100}>
-                                <div className='cart-item-div'>
-                                    <img src={item.image} alt="" className='cart-item-img'/>
-                                    <div >
-                                        <p className='cart-item-name'>{item.productName}</p>
-                                        <p className='cart-item-price'>{`${item.productPrice},00 lei`}</p>
-                                        
-                                    </div>
-                                    <button onClick={()=>{deleteCartProduct(item,index)}} className='trash'><IoTrashOutline className='trash'/></button>
+                {cartQty>0 ?
+                <div className={`cart-item-list ${orderModal?'pointer-none':''}`} >
+                {loading ? <Loader/> : userCart.map((item, index) => (
+                    <Slide key={item.id} triggerOnce="true" duration={index*100}>
+                        <div className='cart-item-div'>
+                            <img src={item.image} alt="" className='cart-item-img'/>
+                            <div >
+                                <p className='cart-item-name'>{item.productName}</p>
+                                <p className='cart-item-price'>{`${item.productPrice},00 lei`}</p>
+                                
+                            </div>
+                            <button onClick={()=>{deleteCartProduct(item,index)}} className='trash'><IoTrashOutline className='trash'/></button>
 
-                                </div>
-                            </Slide>
-                            
-                        ))}
-                    </div>
+                        </div>
+                    </Slide>
+                ))}
+                </div>:''}
+                    
                     {cartQty>0 ?  <div className='cart-div-bottom'>
                         <p style={{fontSize:'24px'}}>{`Total: ${cartTotal},00 lei`}</p>
                         <button className='place-order-btn' onClick={()=>{setOrderModal(true)}}>Continue</button>
