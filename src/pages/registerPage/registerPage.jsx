@@ -47,7 +47,7 @@ function RegisterPage(){
           {loading ? <Loader/> : 
             <form action="" className='login-form'>
               <GoBack/>
-                <h2>Register</h2>
+                <h2 style={{textAlign:'center'}}>Register</h2>
                 <input className='input' type="number" maxLength={10} placeholder='Phone' value={inputPhone} onChange={(e)=>{setInputPhone(e.target.value)}}/>
                 <input className='input' type="email" placeholder='Email' value={inputEmail} onChange={(e)=>{setInputEmail(e.target.value)}}/>
                 <input className='input' type="password" placeholder='Password' value={inputPassword} onChange={(e)=>{setInputPassword(e.target.value)}}/>

@@ -65,7 +65,7 @@ function LoginPage() {
       <div className="login-page-div">
       {loading ? <Loader/> :
         <form className='login-form'>
-            <h2>Sign In</h2>
+            <h2 style={{textAlign:'center'}}>Sign In</h2>
             <input className='input' type="email" placeholder='Email' value={inputEmail} onChange={(e)=>{setInputEmail(e.target.value)}}/>
             <input className='input' type="password" placeholder='Password' value={inputPassword} onChange={(e)=>{setInputPassword(e.target.value)}}/>
             <div className='remember-me'>

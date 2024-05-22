@@ -33,7 +33,24 @@
     object-fit: cover;
     height: 150px;
     width: 100%;
-
+}
+.current-order{
+    width: 100%;
+    border: 3px dashed var(--green);
+    padding: 12px;
+}
+.flex-order-current{
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    text-align: end;
+    cursor: pointer;
+}
+.confetti-div{
+    z-index: 4;
+    width: 100%;
+    position: fixed;
+    top: 0px;
 }
 @media (max-height:700px) {
     .individual-order-div-delivery{

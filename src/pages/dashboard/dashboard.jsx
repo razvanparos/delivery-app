@@ -269,7 +269,9 @@ function Dashboard(){
                     orderedTo: userCart[0].restaurantId,
                     status: 0,
                     orderDate: orderDateFormat,
-                    orderTime: orderTimeFormat
+                    orderTime: orderTimeFormat,
+                    pickedUpBy: '',
+                    tip: tip
                   });
                 setOrderModal(false); 
                 setOrderDialog(true); 

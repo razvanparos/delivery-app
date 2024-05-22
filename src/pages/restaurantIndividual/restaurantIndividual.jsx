@@ -232,7 +232,8 @@ function RestaurantIndividual(){
                         })}
                         
                     </div>
-                <button className='remove-restaurant' onClick={removeRestaurant}>Remove restaurant</button>
+                    {userType=='restaurant'? <button className='remove-restaurant' onClick={removeRestaurant}>Remove restaurant</button>:''}
+               
             </div>
             }
             
