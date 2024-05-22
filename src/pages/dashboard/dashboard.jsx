@@ -88,7 +88,7 @@ function Dashboard(){
         }
     const myOrders = async () =>{
         try{
-            const q = query(ordersDb, where("orderedBy", "==", localStorage.getItem('currentUserId')), orderBy('orderDate','desc'),orderBy('orderTime','desc'));
+            const q = query(ordersDb, where("orderedBy", "==", localStorage.getItem('currentUserId')), orderBy('status','asc'),orderBy('orderTime','desc'));
             const querySnapshot = await getDocs(q);
             const filteredData = querySnapshot.docs.map((doc)=>({
                 ...doc.data(),
@@ -267,6 +267,7 @@ function Dashboard(){
                 setOrderModal(false); 
                 setOrderDialog(true); 
                 getUserData();
+                myOrders();
                 setTimeout(() => {
                     setOrderDialog(false); 
                 }, 2000);
@@ -331,7 +332,7 @@ function Dashboard(){
                     <FaSearch className='search-bar-magnification'/>
                     <div className='restaurants-list'>
                         {loading ? <Loader/> : restaurantData.map((restaurant) => (
-                            <Slide duration={100} triggerOnce='true' key={restaurant.id}>
+                            <Slide duration={300} triggerOnce='true' key={restaurant.id}>
                               <RestaurantCard 
                                 id={restaurant.id}
                                 name={restaurant.name}
@@ -450,7 +451,7 @@ function Dashboard(){
                         <animated.div style={style} className='my-orders-div'>
                             {myOrdersData?.map((data)=>{
                                 return(
-                                    <div key={data.id} className='flex-order' onClick={()=>{showIndividualOrderFunc(data)}}>
+                                    <div key={data.id} className={`flex-order ${[0,1,2].includes(data.status)?'ongoing':''}`} onClick={()=>{showIndividualOrderFunc(data)}}>
                                         <img className='my-orders-img' src={data.restaurantImg} alt="" />
                                         <div className='my-order-details'>
                                             <p>{data.orderDate}</p>

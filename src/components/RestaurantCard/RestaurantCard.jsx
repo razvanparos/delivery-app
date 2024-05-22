@@ -2,6 +2,9 @@ import { Fade } from 'react-awesome-reveal';
 import './RestaurantCard.css'
 import { MdOutlineDeliveryDining } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
+import 'lazysizes';
+
+
 
 function RestaurantCard(props){
     const navigate = useNavigate();
@@ -12,7 +15,7 @@ function RestaurantCard(props){
 
     return(
         <div className='restaurant-card-div' onClick={cardClick}>
-            <Fade duration={2100} triggerOnce={true}><img src={props.image} alt="imagine-mancare" className='restaurant-image'/></Fade>
+            <img data-src={props.image} alt="imagine-mancare" className='restaurant-image lazyload'/>
             <div className='card-bottom'>
                <p className='card-name'>{props.name}</p> 
                <div className='flex'>

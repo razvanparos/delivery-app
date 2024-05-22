@@ -269,6 +269,10 @@
     text-align: end;
     cursor: pointer;
 }
+.ongoing{
+    border: 4px dashed var(--green);
+    padding: 4px;
+}
 .no-orders{
     display: flex;
     flex-direction: column;

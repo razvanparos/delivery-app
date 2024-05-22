@@ -3,14 +3,25 @@
     flex-direction: column;
     row-gap: 12px;
     width: 100%;
+    height: auto;
     cursor: pointer;
 }
 .restaurant-image{
+    display: block;
     object-fit: cover;
     width: 100%;
     max-height: 180px;
     border-radius: 10px;
     min-height: 180px;
+}
+.lazyload,
+.lazyloading {
+    opacity: 0;
+}
+
+.lazyloaded {
+    opacity: 1;
+    transition: opacity 0.3s;
 }
 .card-name{
     color: white;

@@ -128,6 +128,7 @@ const getCurrentOrder = async () =>{
       if(status===1){
         await updateDoc(ordersRef, { status: 2 }); 
         updateStatusIndividual(id)
+        getCurrentOrder();
       }else{
         await updateDoc(ordersRef, { status: 3 }); 
         updateStatusIndividual(id)
