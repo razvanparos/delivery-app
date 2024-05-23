@@ -265,7 +265,7 @@ function DashboardRestaurant() {
             <animated.div style={style} className='my-orders-div'>
               {myReceivedOrdersData?.map((data)=>{
                 return(
-                  <div key={data.id} className='flex-order' onClick={()=>{showIndividualOrderFunc(data)}}>
+                  <div key={data.id} className={`flex-order ${[0,1].includes(data.status)?'ongoing':''}`} onClick={()=>{showIndividualOrderFunc(data)}}>
                     <img className='my-orders-img' src={data.restaurantImg} alt="" />
                     <div className='my-order-details'>
                       <p>{data.orderDate}</p>
