@@ -23,6 +23,11 @@ function RegisterPage(){
         if(inputPhone && inputEmail && inputPassword && userType){
           try{
             setLoading(true);
+            if(inputPhone.length!=10){
+              setLoading(false);
+              setErrorMsg("Invalid phone")
+              return
+            }
             await createUserWithEmailAndPassword(auth, inputEmail, inputPassword) 
             await setDoc(doc(db, "UsersDetails", `${auth.currentUser.uid}`), {
               id: auth.currentUser.uid,
@@ -38,6 +43,8 @@ function RegisterPage(){
             console.log(err)
             setErrorMsg(err.message)
           }
+    }else{
+      setErrorMsg('All field are required')
     }
         
     }
